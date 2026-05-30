@@ -1,0 +1,83 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const listicles = await getCollection('listicles');
+  return listicles.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { data } = entry;
+const { Content } = await render(entry);
+---
+<Base title={data.title}>
+  {data.heroImage && (
+    <img src={data.heroImage} alt={data.title}
+      style="width:100%;max-height:320px;object-fit:cover;border-radius:12px;margin-bottom:1.5rem;" />
+  )}
+
+  <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.5rem;">{data.category}</div>
+  <h1 style="font-size:2rem;font-weight:800;margin-bottom:0.5rem;">{data.title}</h1>
+  <p style="font-size:1.1rem;color:#374151;margin-bottom:0.5rem;">{data.dek}</p>
+  <p style="font-size:0.8rem;color:#9ca3af;margin-bottom:2rem;">
+    Last updated: {data.lastUpdated.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+  </p>
+
+  <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:1rem 1.25rem;margin-bottom:2rem;">
+    <strong style="color:#1d4ed8;">Quick Answer:</strong> {data.quickAnswer}
+  </div>
+
+  <div style="margin-bottom:2.5rem;line-height:1.8;">
+    <Content />
+  </div>
+
+  <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:1.25rem;">The Rankings</h2>
+  <div style="display:flex;flex-direction:column;gap:1.5rem;margin-bottom:3rem;">
+    {data.items.map((item) => (
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:1.5rem;">
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.75rem;">
+          <span style="font-size:1.4rem;font-weight:900;color:#4f46e5;">#{item.rank}</span>
+          {item.image && <img src={item.image} alt={item.name} width="48" height="48" style="border-radius:8px;" />}
+          <div>
+            <div style="font-weight:700;font-size:1.05rem;">{item.name}</div>
+            <div style="font-size:0.8rem;color:#6b7280;">Best for: {item.bestFor} &bull; From {item.startingPrice}</div>
+          </div>
+          <a href={item.url} target="_blank" rel="noopener"
+            style="margin-left:auto;font-size:0.8rem;padding:0.4rem 0.9rem;background:#4f46e5;color:#fff;border-radius:6px;text-decoration:none;">
+            Visit
+          </a>
+        </div>
+        <p style="font-size:0.9rem;color:#374151;margin-bottom:0.75rem;">{item.description}</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;font-size:0.85rem;">
+          <div>
+            <strong style="color:#15803d;">Pros</strong>
+            <ul style="margin-top:0.25rem;padding-left:1rem;">
+              {item.pros.map((p) => <li>{p}</li>)}
+            </ul>
+          </div>
+          <div>
+            <strong style="color:#b91c1c;">Cons</strong>
+            <ul style="margin-top:0.25rem;padding-left:1rem;">
+              {item.cons.map((c) => <li>{c}</li>)}
+            </ul>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  {data.faq.length > 0 && (
+    <div>
+      <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:1rem;">FAQ</h2>
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        {data.faq.map((f) => (
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1rem 1.25rem;">
+            <p style="font-weight:600;margin-bottom:0.4rem;">{f.question}</p>
+            <p style="font-size:0.9rem;color:#374151;">{f.answer}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+</Base>
