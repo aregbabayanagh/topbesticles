@@ -1,0 +1,91 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="/" class="wordmark" aria-label="TopBesticles — home">
+        Top<span>Besticles</span>
+      </a>
+      <p class="tagline">Hand-checked best-of lists for software, services, and tools.</p>
+    </div>
+
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="/#categories">Categories</a>
+      <a href="/#how-we-rank">How we rank</a>
+      <a href="/#get-listed">Get listed</a>
+      <a href="/methodology">Methodology</a>
+    </nav>
+  </div>
+
+  <div class="footer-legal">
+    <p>
+      &copy; {year} TopBesticles.&ensp;Some links on this site are affiliate links — we may earn a
+      commission if you purchase through them, at no extra cost to you. Affiliate relationships
+      never influence our rankings or editorial decisions.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    margin-top: 5rem;
+  }
+
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .wordmark {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -.02em;
+  }
+  .wordmark span { color: var(--accent); }
+  .wordmark:hover { color: var(--text); }
+
+  .tagline {
+    margin-top: .4rem;
+    font-size: .85rem;
+    color: var(--text-3);
+    max-width: 260px;
+  }
+
+  .footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem 1.5rem;
+    align-items: center;
+    padding-top: .25rem;
+  }
+  .footer-nav a {
+    font-size: .875rem;
+    font-weight: 500;
+    color: var(--text-2);
+    transition: color var(--ease);
+  }
+  .footer-nav a:hover { color: var(--accent); }
+
+  .footer-legal {
+    border-top: 1px solid var(--border);
+    padding: 1.25rem 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .footer-legal p {
+    font-size: .78rem;
+    color: var(--text-3);
+    line-height: 1.6;
+  }
+</style>
