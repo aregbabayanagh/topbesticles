@@ -1,379 +1,134 @@
 ---
 import Base from '../layouts/Base.astro';
+import DnaBackground from '../components/DnaBackground.astro';
+import Hero from '../components/Hero.astro';
+import Showcase from '../components/Showcase.astro';
+import Benefits from '../components/Benefits.astro';
+import CitedBand from '../components/CitedBand.astro';
 import CategoryCard from '../components/CategoryCard.astro';
+import Partner from '../components/Partner.astro';
 import { getCollection } from 'astro:content';
 
 const listicles = await getCollection('listicles');
-
-// Coming-soon placeholders to fill out the grid
-const comingSoon = [
-  {
-    title: 'Email Marketing Platforms',
-    description: 'Compared by deliverability, automation, and pricing — from solo senders to large lists.',
-  },
-  {
-    title: 'Project Management Tools',
-    description: 'The best tools for keeping teams on track, from startups to enterprise.',
-  },
-  {
-    title: 'Customer Support Software',
-    description: 'Helpdesks, ticketing, and live chat solutions ranked for real support teams.',
-  },
-];
 ---
 
-<Base title="TopBesticles — Hand-checked best-of lists">
+<Base title="TopBesticles — The most complete roundup of the best tools, software & services">
+  <DnaBackground slot="before-header" />
 
-  <!-- ── Hero ──────────────────────────────────────── -->
-  <section class="hero" aria-labelledby="hero-heading">
-    <div class="hero-inner">
-      <div class="hero-content">
-        <h1 id="hero-heading">
-          Find the best tool for the job —<br class="br-md" />
-          hand-checked and kept current.
-        </h1>
-        <p class="hero-sub">
-          We research, compare, and rank software, services, and tools so you
-          don't have to wade through generic review sites and out-of-date listicles.
-        </p>
-        <a href="#categories" class="btn btn-primary hero-cta">
-          Browse categories
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </a>
+  <Hero />
+  <Showcase />
+  <Benefits />
+  <CitedBand />
+
+  <!-- Browse by category -->
+  <section class="block" id="categories">
+    <div class="wrap">
+      <div class="head">
+        <h2>Browse by category</h2>
+        <p>Short, honest shortlists for the decisions that matter.</p>
       </div>
-    </div>
-  </section>
-
-  <!-- ── Trust row ─────────────────────────────────── -->
-  <section class="trust" aria-label="Our editorial commitments">
-    <div class="container">
-      <ul class="trust-list" role="list">
-        <li class="trust-item">
-          <span class="trust-icon" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-              <circle cx="11" cy="11" r="9" stroke="currentColor" stroke-width="1.75"/>
-              <path d="M7 11l3 3 5-5.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          <span>We check every list before publishing</span>
-        </li>
-        <li class="trust-item">
-          <span class="trust-icon" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-              <rect x="3" y="4" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.75"/>
-              <path d="M3 9h16M8 2v4M14 2v4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
-            </svg>
-          </span>
-          <span>Every list shows when it was last updated</span>
-        </li>
-        <li class="trust-item">
-          <span class="trust-icon" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-              <path d="M11 2L3 6v5c0 4.5 3.5 8.5 8 9.5 4.5-1 8-5 8-9.5V6z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/>
-              <path d="M8 11l2 2 4-4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          <span>Rankings are never for sale</span>
-        </li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- ── Categories ────────────────────────────────── -->
-  <section class="categories" id="categories" aria-labelledby="categories-heading">
-    <div class="container">
-      <h2 id="categories-heading">Browse by category</h2>
-      <p class="section-sub">
-        Each list is researched independently. Click any card to read the full breakdown.
-      </p>
-      <div class="card-grid">
+      <div class="grid">
         {listicles.map((entry) => (
           <CategoryCard
             title={entry.data.title}
             slug={entry.id}
             description={entry.data.dek}
+            category={entry.data.category}
             lastUpdated={entry.data.lastUpdated}
             heroImage={entry.data.heroImage}
           />
         ))}
-        {comingSoon.map((item) => (
-          <CategoryCard
-            title={item.title}
-            description={item.description}
-            comingSoon={true}
-          />
-        ))}
-      </div>
-    </div>
-  </section>
 
-  <!-- ── How we rank ───────────────────────────────── -->
-  <section class="how-we-rank" id="how-we-rank" aria-labelledby="rank-heading">
-    <div class="container">
-      <div class="rank-layout">
-        <div class="rank-text">
-          <h2 id="rank-heading">How we rank</h2>
-          <p class="section-sub">
-            Our goal is to save you time by doing the research honestly.
-            Here's what that looks like in practice.
-          </p>
-          <a href="/methodology" class="btn btn-ghost rank-link">
-            Read the full methodology →
-          </a>
-        </div>
-        <ol class="rank-steps" role="list">
-          <li>
-            <span class="step-num" aria-hidden="true">1</span>
-            <div>
-              <strong>We verify before we publish.</strong>
-              Every tool on a list is tested, trialled, or thoroughly reviewed — not just
-              scraped from another listicle.
-            </div>
-          </li>
-          <li>
-            <span class="step-num" aria-hidden="true">2</span>
-            <div>
-              <strong>We date everything.</strong>
-              Software changes fast. Every list shows a "last updated" date and we
-              revisit rankings when things shift.
-            </div>
-          </li>
-          <li>
-            <span class="step-num" aria-hidden="true">3</span>
-            <div>
-              <strong>Inclusion is earned, not bought.</strong>
-              Affiliate commissions help keep the lights on, but they don't buy a spot on
-              any list. A product with no affiliate link can and does rank first.
-            </div>
-          </li>
-        </ol>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Get listed ────────────────────────────────── -->
-  <section class="get-listed" id="get-listed" aria-labelledby="listed-heading">
-    <div class="container">
-      <div class="listed-card">
-        <div class="listed-text">
-          <h2 id="listed-heading">Think your product belongs on a list?</h2>
-          <p>
-            If you make or represent something genuinely best-in-class, we want to hear
-            about it. Submissions are reviewed editorially — inclusion is never paid for.
-          </p>
-        </div>
-        <a
-          href="mailto:hello@topbesticles.com?subject=Submission%20request"
-          class="btn btn-primary listed-btn"
+        <!-- Coming soon placeholders -->
+        <CategoryCard
+          title="Best Email Marketing Platforms"
+          description="In research now — testing deliverability and real pricing."
+          category="Marketing"
+          comingSoon
         >
-          Submit for consideration
-        </a>
+          <svg slot="thumb" viewBox="0 0 400 230" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="cv2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3FA0F5"/><stop offset="1" stop-color="#1FB6C9"/></linearGradient></defs>
+            <rect width="400" height="230" fill="url(#cv2)"/>
+            <line x1="346" y1="188" x2="271" y2="195" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="271" y1="195" x2="162" y2="179" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="254" y1="85" x2="178" y2="99" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="271" y1="195" x2="344" y2="123" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="346" y1="188" x2="344" y2="123" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="178" y1="99" x2="162" y2="179" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="58" y1="50" x2="162" y2="179" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="254" y1="85" x2="344" y2="123" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="58" y1="50" x2="178" y2="99" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <circle cx="346" cy="188" r="4" fill="#fff" fill-opacity="0.85"/>
+            <circle cx="58" cy="50" r="4" fill="#fff" fill-opacity="0.85"/>
+            <circle cx="254" cy="85" r="4" fill="#fff" fill-opacity="0.85"/>
+            <circle cx="178" cy="99" r="4" fill="#fff" fill-opacity="0.85"/>
+            <circle cx="271" cy="195" r="13" fill="#fff" fill-opacity="0.25"/>
+            <circle cx="271" cy="195" r="6" fill="#fff"/>
+            <circle cx="344" cy="123" r="4" fill="#fff" fill-opacity="0.85"/>
+            <circle cx="162" cy="179" r="4" fill="#fff" fill-opacity="0.85"/>
+          </svg>
+        </CategoryCard>
+
+        <CategoryCard
+          title="Best Project Management Software"
+          description="Candidate list being built and verified."
+          category="Operations"
+          comingSoon
+        >
+          <svg slot="thumb" viewBox="0 0 400 230" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="cv3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8B5CF6"/><stop offset="1" stop-color="#6366F1"/></linearGradient></defs>
+            <rect width="400" height="230" fill="url(#cv3)"/>
+            <line x1="359" y1="111" x2="243" y2="175" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="240" y1="46" x2="283" y2="131" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="240" y1="46" x2="243" y2="175" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="116" y1="123" x2="136" y2="41" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="116" y1="123" x2="44" y2="170" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="243" y1="175" x2="283" y2="131" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="44" y1="170" x2="136" y2="41" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="240" y1="46" x2="136" y2="41" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="359" y1="111" x2="283" y2="131" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <circle cx="116" cy="123" r="4" fill="#fff" fill-opacity="0.85"/>
+            <circle cx="240" cy="46" r="4" fill="#fff" fill-opacity="0.85"/>
+            <circle cx="44" cy="170" r="4" fill="#fff" fill-opacity="0.85"/>
+            <circle cx="359" cy="111" r="4" fill="#fff" fill-opacity="0.85"/>
+            <circle cx="243" cy="175" r="4" fill="#fff" fill-opacity="0.85"/>
+            <circle cx="283" cy="131" r="4" fill="#fff" fill-opacity="0.85"/>
+            <circle cx="136" cy="41" r="13" fill="#fff" fill-opacity="0.25"/>
+            <circle cx="136" cy="41" r="6" fill="#fff"/>
+          </svg>
+        </CategoryCard>
+
+        <CategoryCard
+          title="Best AI Writing Tools"
+          description="Putting the top contenders through real tasks."
+          category="AI tools"
+          comingSoon
+        >
+          <svg slot="thumb" viewBox="0 0 400 230" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="cv4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0EA5E9"/><stop offset="1" stop-color="#14B8A6"/></linearGradient></defs>
+            <rect width="400" height="230" fill="url(#cv4)"/>
+            <line x1="116" y1="53" x2="61" y2="100" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="334" y1="164" x2="212" y2="80" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="285" y1="72" x2="212" y2="80" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="61" y1="100" x2="109" y2="184" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="212" y1="80" x2="139" y2="136" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="116" y1="53" x2="139" y2="136" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="334" y1="164" x2="285" y2="72" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="109" y1="184" x2="139" y2="136" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <line x1="61" y1="100" x2="139" y2="136" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5"/>
+            <circle cx="116" cy="53" r="4" fill="#fff" fill-opacity="0.85"/>
+            <circle cx="61" cy="100" r="4" fill="#fff" fill-opacity="0.85"/>
+            <circle cx="334" cy="164" r="4" fill="#fff" fill-opacity="0.85"/>
+            <circle cx="285" cy="72" r="4" fill="#fff" fill-opacity="0.85"/>
+            <circle cx="212" cy="80" r="4" fill="#fff" fill-opacity="0.85"/>
+            <circle cx="109" cy="184" r="13" fill="#fff" fill-opacity="0.25"/>
+            <circle cx="109" cy="184" r="6" fill="#fff"/>
+            <circle cx="139" cy="136" r="4" fill="#fff" fill-opacity="0.85"/>
+          </svg>
+        </CategoryCard>
       </div>
     </div>
   </section>
 
+  <Partner />
 </Base>
-
-<style>
-  /* ── Shared layout util ─────────────────────────── */
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-inline: 1.5rem;
-  }
-
-  .section-sub {
-    font-size: .95rem;
-    color: var(--text-2);
-    margin-top: .6rem;
-    max-width: 560px;
-  }
-
-  /* ── Hero ───────────────────────────────────────── */
-  .hero {
-    padding: 5rem 1.5rem 4.5rem;
-    text-align: center;
-  }
-  .hero-inner {
-    max-width: 720px;
-    margin: 0 auto;
-  }
-  .hero-content {
-    animation: fadeUp .55s cubic-bezier(.22,.68,0,1.2) both;
-  }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .hero-content { animation: none; }
-  }
-
-  h1 {
-    font-size: clamp(2rem, 5vw, 3.1rem);
-    font-weight: 700;
-    line-height: 1.2;
-    letter-spacing: -.025em;
-    color: var(--text);
-  }
-  .br-md { display: none; }
-  @media (min-width: 520px) { .br-md { display: inline; } }
-
-  .hero-sub {
-    margin-top: 1.1rem;
-    font-size: clamp(.95rem, 2vw, 1.1rem);
-    color: var(--text-2);
-    max-width: 540px;
-    margin-inline: auto;
-    line-height: 1.7;
-  }
-  .hero-cta {
-    margin-top: 2rem;
-    font-size: 1rem;
-    padding: .85rem 1.75rem;
-  }
-
-  /* ── Trust row ──────────────────────────────────── */
-  .trust {
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    padding: 1.75rem 0;
-  }
-  .trust-list {
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem 3rem;
-    justify-content: center;
-  }
-  .trust-item {
-    display: flex;
-    align-items: center;
-    gap: .65rem;
-    font-size: .9rem;
-    font-weight: 500;
-    color: var(--text-2);
-  }
-  .trust-icon {
-    color: var(--accent);
-    flex-shrink: 0;
-    display: flex;
-  }
-
-  /* ── Categories ─────────────────────────────────── */
-  .categories {
-    padding: 4.5rem 0;
-  }
-  .card-grid {
-    margin-top: 2rem;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-  }
-  @media (min-width: 540px) {
-    .card-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (min-width: 900px) {
-    .card-grid { grid-template-columns: repeat(3, 1fr); }
-  }
-
-  /* ── How we rank ────────────────────────────────── */
-  .how-we-rank {
-    background: var(--accent-light);
-    padding: 4.5rem 0;
-  }
-  .rank-layout {
-    display: flex;
-    gap: 4rem;
-    flex-wrap: wrap;
-  }
-  .rank-text {
-    flex: 1;
-    min-width: 240px;
-    display: flex;
-    flex-direction: column;
-    gap: .75rem;
-  }
-  .rank-link { align-self: flex-start; }
-
-  .rank-steps {
-    flex: 1.4;
-    min-width: 280px;
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 1.4rem;
-    counter-reset: steps;
-  }
-  .rank-steps li {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
-    font-size: .93rem;
-    color: var(--text-2);
-    line-height: 1.65;
-  }
-  .rank-steps li strong { color: var(--text); }
-  .step-num {
-    flex-shrink: 0;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--accent);
-    color: #fff;
-    font-size: .78rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: .1rem;
-  }
-
-  /* ── Get listed ─────────────────────────────────── */
-  .get-listed {
-    padding: 4.5rem 0;
-  }
-  .listed-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
-    padding: 2.5rem 2.25rem;
-    display: flex;
-    gap: 2rem;
-    align-items: center;
-    flex-wrap: wrap;
-    box-shadow: var(--shadow-sm);
-  }
-  .listed-text {
-    flex: 1;
-    min-width: 240px;
-  }
-  .listed-text h2 {
-    font-size: clamp(1.2rem, 2.5vw, 1.55rem);
-    font-weight: 600;
-    letter-spacing: -.02em;
-  }
-  .listed-text p {
-    margin-top: .6rem;
-    font-size: .9rem;
-    color: var(--text-2);
-    line-height: 1.65;
-    max-width: 500px;
-  }
-  .listed-btn {
-    flex-shrink: 0;
-    white-space: nowrap;
-    min-height: 44px;
-  }
-
-  /* Section headings */
-  h2 {
-    font-size: clamp(1.4rem, 3vw, 1.9rem);
-    font-weight: 700;
-    letter-spacing: -.025em;
-    line-height: 1.25;
-  }
-</style>
