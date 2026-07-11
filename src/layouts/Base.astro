@@ -25,6 +25,17 @@ const {
     <meta name="description" content={description} />
     <title>{title} | TopBesticles</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <!-- Google Analytics (GA4) — loads on every page via the Base layout.
+         TODO: replace G-XXXXXXXXXX below (both occurrences) with the real
+         Measurement ID from your GA4 property (Admin → Data Streams). -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX'); // ← paste your real GA4 Measurement ID here
+    </script>
   </head>
   <body>
     <slot name="before-header" />
