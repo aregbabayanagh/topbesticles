@@ -9,13 +9,15 @@ import CategoryCard from '../components/CategoryCard.astro';
 import Partner from '../components/Partner.astro';
 import { getCollection } from 'astro:content';
 
+// "Browse by category" reads from the categories collection. Each listicle's
+// `category` field points at a category slug, so we tally counts per category.
+const categories = await getCollection('categories');
 const listicles = await getCollection('listicles');
 
-// The listicle `category` field now stores a category slug. Resolve it to the
-// category's display title so the "Browse by category" pills stay readable.
-// (This grid still reads from `listicles` — we'll rewire it to `categories` next step.)
-const categories = await getCollection('categories');
-const categoryTitleBySlug = new Map(categories.map((c) => [c.id, c.data.title]));
+const countByCategory = new Map<string, number>();
+for (const l of listicles) {
+  countByCategory.set(l.data.category, (countByCategory.get(l.data.category) ?? 0) + 1);
+}
 ---
 
 <Base title="TopBesticles — The most complete roundup of the best tools, software & services">
@@ -34,14 +36,14 @@ const categoryTitleBySlug = new Map(categories.map((c) => [c.id, c.data.title]))
         <p>Short, honest shortlists for the decisions that matter.</p>
       </div>
       <div class="grid">
-        {listicles.map((entry) => (
+        {categories.map((cat, i) => (
           <CategoryCard
-            title={entry.data.title}
-            slug={entry.id}
-            description={entry.data.dek}
-            category={categoryTitleBySlug.get(entry.data.category) ?? entry.data.category}
-            lastUpdated={entry.data.lastUpdated}
-            heroImage={entry.data.heroImage}
+            title={cat.data.title}
+            href={`/category/${cat.id}`}
+            description={cat.data.description}
+            coverImage={cat.data.coverImage}
+            count={countByCategory.get(cat.id) ?? 0}
+            coverVariant={i}
           />
         ))}
 

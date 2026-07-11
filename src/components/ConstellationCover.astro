@@ -1,0 +1,47 @@
+---
+// Gradient "constellation" cover art used as the fallback thumbnail for
+// category cards that have no coverImage — mirrors the reference design's
+// coming-soon placeholder art so cards never look broken.
+interface Props {
+  variant?: number;
+}
+const { variant = 0 } = Astro.props;
+
+// Palettes cycle by variant so a grid of fallbacks stays visually varied.
+const palettes = [
+  ['#6D4DFB', '#22D3EE'],
+  ['#3FA0F5', '#1FB6C9'],
+  ['#8B5CF6', '#6366F1'],
+  ['#0EA5E9', '#14B8A6'],
+];
+const [from, to] = palettes[((variant % palettes.length) + palettes.length) % palettes.length];
+
+// Unique gradient id per instance so multiple covers on one page don't clash.
+const gid = `cc-${Math.random().toString(36).slice(2, 8)}`;
+---
+<svg viewBox="0 0 400 230" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-hidden="true">
+  <defs>
+    <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color={from} />
+      <stop offset="1" stop-color={to} />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="230" fill={`url(#${gid})`} />
+  <line x1="346" y1="188" x2="271" y2="195" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5" />
+  <line x1="271" y1="195" x2="162" y2="179" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5" />
+  <line x1="254" y1="85" x2="178" y2="99" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5" />
+  <line x1="271" y1="195" x2="344" y2="123" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5" />
+  <line x1="346" y1="188" x2="344" y2="123" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5" />
+  <line x1="178" y1="99" x2="162" y2="179" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5" />
+  <line x1="58" y1="50" x2="162" y2="179" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5" />
+  <line x1="254" y1="85" x2="344" y2="123" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5" />
+  <line x1="58" y1="50" x2="178" y2="99" stroke="#fff" stroke-opacity="0.45" stroke-width="1.5" />
+  <circle cx="346" cy="188" r="4" fill="#fff" fill-opacity="0.85" />
+  <circle cx="58" cy="50" r="4" fill="#fff" fill-opacity="0.85" />
+  <circle cx="254" cy="85" r="4" fill="#fff" fill-opacity="0.85" />
+  <circle cx="178" cy="99" r="4" fill="#fff" fill-opacity="0.85" />
+  <circle cx="271" cy="195" r="13" fill="#fff" fill-opacity="0.25" />
+  <circle cx="271" cy="195" r="6" fill="#fff" />
+  <circle cx="344" cy="123" r="4" fill="#fff" fill-opacity="0.85" />
+  <circle cx="162" cy="179" r="4" fill="#fff" fill-opacity="0.85" />
+</svg>

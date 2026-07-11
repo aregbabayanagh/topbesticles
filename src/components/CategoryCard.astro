@@ -1,29 +1,46 @@
 ---
+import { Image } from 'astro:assets';
+import ConstellationCover from './ConstellationCover.astro';
+
 interface Props {
   title: string;
-  slug?: string;
   description: string;
-  category: string;
+  href?: string;
+  slug?: string;
+  // Listicle-card fields (used on /category/<slug> pages)
+  category?: string;
   lastUpdated?: Date;
   heroImage?: string;
+  // Category-card fields (used on the homepage "Browse by category" grid)
+  coverImage?: string;
+  count?: number;
+  coverVariant?: number;
   comingSoon?: boolean;
 }
 
 const {
   title,
-  slug,
   description,
+  href,
+  slug,
   category,
   lastUpdated,
   heroImage,
+  coverImage,
+  count,
+  coverVariant = 0,
   comingSoon = false,
 } = Astro.props;
 
-const href = comingSoon ? undefined : `/${slug}`;
+// Presence of `count` marks a category card; otherwise it's a listicle card.
+const isCategory = count !== undefined;
+const link = href ?? (comingSoon ? undefined : `/${slug}`);
 
 const updatedLabel = lastUpdated
   ? lastUpdated.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
   : null;
+
+const countLabel = isCategory ? `${count} ${count === 1 ? 'list' : 'lists'}` : null;
 ---
 
 {comingSoon ? (
@@ -41,10 +58,14 @@ const updatedLabel = lastUpdated
     </div>
   </div>
 ) : (
-  <a class="ccard" href={href}>
+  <a class="ccard" href={link}>
     <div class="thumb">
-      {heroImage ? (
+      {coverImage ? (
+        <Image src={coverImage} alt={title} width={400} height={230} loading="lazy" />
+      ) : heroImage ? (
         <img src={heroImage} alt={title} width="400" height="230" loading="lazy" />
+      ) : isCategory ? (
+        <ConstellationCover variant={coverVariant} />
       ) : (
         <slot name="thumb">
           <div class="thumb-default"></div>
@@ -52,11 +73,11 @@ const updatedLabel = lastUpdated
       )}
     </div>
     <div class="cb">
-      <span class="pill">{category}</span>
+      <span class="pill">{isCategory ? countLabel : category}</span>
       <h3>{title}</h3>
       <p>{description}</p>
       <div class="cf">
-        {updatedLabel && (
+        {!isCategory && updatedLabel && (
           <span class="fresh"><span class="d"></span>Updated {updatedLabel}</span>
         )}
         <span class="go">&rarr;</span>
