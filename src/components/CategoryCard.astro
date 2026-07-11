@@ -16,6 +16,8 @@ interface Props {
   count?: number;
   coverVariant?: number;
   comingSoon?: boolean;
+  // Lowercased haystack (title + dek + tags) for client-side filtering.
+  search?: string;
 }
 
 const {
@@ -30,6 +32,7 @@ const {
   count,
   coverVariant = 0,
   comingSoon = false,
+  search,
 } = Astro.props;
 
 // Presence of `count` marks a category card; otherwise it's a listicle card.
@@ -58,7 +61,7 @@ const countLabel = isCategory ? `${count} ${count === 1 ? 'list' : 'lists'}` : n
     </div>
   </div>
 ) : (
-  <a class="ccard" href={link}>
+  <a class="ccard" href={link} data-search={search}>
     <div class="thumb">
       {coverImage ? (
         <Image src={coverImage} alt={title} width={400} height={230} loading="lazy" />

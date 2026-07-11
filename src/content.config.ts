@@ -5,7 +5,11 @@ const categories = defineCollection({
   loader: glob({ pattern: '**/*.yaml', base: './src/content/categories' }),
   schema: z.object({
     title: z.string(),
-    slug: z.string(),
+    // Keystatic persists the slug as the filename (entry.id), not as a data
+    // field, so it's optional here. The real slug is always `entry.id`.
+    slug: z.string().optional(),
+    // Optional H1 override for the category page; falls back to `title`.
+    heading: z.string().optional(),
     description: z.string(),
     coverImage: z.string().optional(),
     metaTitle: z.string().optional(),
@@ -17,7 +21,9 @@ const listicles = defineCollection({
   loader: glob({ pattern: '**/*.mdoc', base: './src/content/listicles' }),
   schema: z.object({
     title: z.string(),
-    slug: z.string(),
+    // Keystatic persists the slug as the filename (entry.id), not as a data
+    // field, so it's optional here. The real slug is always `entry.id`.
+    slug: z.string().optional(),
     // Parent category — stored as the category's slug (relationship field).
     category: z.string(),
     tags: z.array(z.string()).default([]),

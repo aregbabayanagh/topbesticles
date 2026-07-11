@@ -14,38 +14,142 @@ export async function getStaticPaths() {
     params: { slug: category.id },
     props: {
       category,
-      posts: listicles.filter((l) => l.data.category === category.id),
+      posts: listicles
+        .filter((l) => l.data.category === category.id)
+        .sort((a, b) => b.data.lastUpdated.getTime() - a.data.lastUpdated.getTime()),
     },
   }));
 }
 
 const { category, posts } = Astro.props;
 const { data } = category;
+
+// H1 uses `heading` when set, otherwise `title`. Breadcrumbs, homepage cards,
+// and the listicle's category link keep using `title`.
+const h1 = data.heading || data.title;
+
+const count = posts.length;
+const countLabel = `${count} ${count === 1 ? 'list' : 'lists'} in ${data.title}`;
+
+// BreadcrumbList JSON-LD (Home → Category).
+const homeUrl = new URL('/', Astro.site).href;
+const categoryUrl = new URL(`/category/${category.id}/`, Astro.site).href;
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: homeUrl },
+    { '@type': 'ListItem', position: 2, name: data.title, item: categoryUrl },
+  ],
+};
 ---
-<Base title={data.title} description={data.description} metaTitle={data.metaTitle} metaDescription={data.metaDescription}>
-  <section class="block">
+<Base title={h1} description={data.description} metaTitle={data.metaTitle} metaDescription={data.metaDescription}>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
+
+  <section class="block cat">
     <div class="wrap">
-      <div class="head">
-        <h2>{data.title}</h2>
-        <p>{data.description}</p>
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep" aria-hidden="true">&rsaquo;</span>
+        <span aria-current="page">{data.title}</span>
+      </nav>
+
+      <div class="cat-head">
+        <h1>{h1}</h1>
+        <p class="cat-desc">{data.description}</p>
+        {count > 0 && <span class="count-pill">{countLabel}</span>}
       </div>
 
-      {posts.length > 0 ? (
-        <div class="grid">
-          {posts.map((entry) => (
-            <CategoryCard
-              title={entry.data.title}
-              slug={entry.id}
-              description={entry.data.dek}
-              category={data.title}
-              lastUpdated={entry.data.lastUpdated}
-              heroImage={entry.data.heroImage}
+      {count > 0 ? (
+        <>
+          <div class="searchbar">
+            <svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="11" cy="11" r="7" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              id="cat-search"
+              type="search"
+              autocomplete="off"
+              placeholder={`Search ${data.title}…`}
+              aria-label={`Search ${data.title}`}
             />
-          ))}
-        </div>
+          </div>
+
+          <div class="grid" id="cat-grid">
+            {posts.map((entry) => (
+              <CategoryCard
+                title={entry.data.title}
+                slug={entry.id}
+                description={entry.data.dek}
+                category={data.title}
+                lastUpdated={entry.data.lastUpdated}
+                heroImage={entry.data.heroImage}
+                search={`${entry.data.title} ${entry.data.dek} ${entry.data.tags.join(' ')}`.toLowerCase()}
+              />
+            ))}
+          </div>
+
+          <div class="empty" id="no-match" hidden>
+            <h3>No matches</h3>
+            <p>Nothing here matches <strong id="no-match-q"></strong>. Try a different search.</p>
+          </div>
+        </>
       ) : (
-        <p style="color:var(--ink-2);">No listicles in this category yet — check back soon.</p>
+        <div class="empty">
+          <h3>Lists coming soon</h3>
+          <p>We're researching and verifying the best {data.title} options. Check back shortly.</p>
+        </div>
       )}
     </div>
   </section>
 </Base>
+
+<script>
+  const input = document.getElementById('cat-search') as HTMLInputElement | null;
+  const grid = document.getElementById('cat-grid');
+  const noMatch = document.getElementById('no-match');
+  const noMatchQ = document.getElementById('no-match-q');
+
+  if (input && grid && noMatch) {
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>('[data-search]'));
+
+    const applyFilter = () => {
+      const q = input.value.trim().toLowerCase();
+      let visible = 0;
+      for (const card of cards) {
+        const hay = card.getAttribute('data-search') ?? '';
+        const show = q === '' || hay.includes(q);
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+      }
+      noMatch.hidden = visible !== 0;
+      if (noMatchQ) noMatchQ.textContent = `“${input.value.trim()}”`;
+    };
+
+    input.addEventListener('input', applyFilter);
+  }
+</script>
+
+<style>
+.crumbs{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-3);margin-bottom:24px;}
+.crumbs a{color:var(--ink-2);}
+.crumbs a:hover{color:var(--accent);}
+.crumbs .sep{color:var(--ink-3);}
+.crumbs [aria-current]{color:var(--ink);font-weight:600;}
+
+.cat-head{max-width:720px;margin-bottom:32px;}
+.cat-head h1{font-weight:700;font-size:clamp(2rem,3.6vw,2.9rem);letter-spacing:-.02em;line-height:1.1;}
+.cat-desc{color:var(--ink-2);font-size:1.1rem;margin-top:12px;line-height:1.6;}
+.count-pill{display:inline-block;margin-top:18px;font-size:12.5px;font-weight:600;color:var(--accent);background:var(--soft);padding:6px 13px;border-radius:999px;}
+
+.searchbar{position:relative;max-width:440px;margin-bottom:34px;}
+.searchbar .ico{position:absolute;left:17px;top:50%;transform:translateY(-50%);color:var(--ink-3);pointer-events:none;}
+.searchbar input{width:100%;font-family:inherit;font-size:15px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:999px;padding:13px 20px 13px 46px;box-shadow:var(--sh);outline:none;transition:border-color .15s,box-shadow .15s;}
+.searchbar input::placeholder{color:var(--ink-3);}
+.searchbar input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(109,77,251,.15);}
+
+.empty{text-align:center;padding:56px 20px 40px;color:var(--ink-2);}
+.empty h3{font-weight:700;font-size:1.4rem;color:var(--ink);margin-bottom:10px;}
+.empty p{max-width:440px;margin:0 auto;line-height:1.6;}
+</style>

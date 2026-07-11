@@ -8,10 +8,14 @@ export async function getStaticPaths() {
     getCollection('listicles'),
     getCollection('categories'),
   ]);
-  const catBySlug = new Map(categories.map((c) => [c.id, c.data]));
+  // Key by entry.id (the real slug — Keystatic stores it as the filename, not
+  // in the data), and keep the id alongside title for building the link.
+  const catById = new Map(
+    categories.map((c) => [c.id, { slug: c.id, title: c.data.title }])
+  );
   return listicles.map((entry) => ({
     params: { slug: entry.id },
-    props: { entry, category: catBySlug.get(entry.data.category) ?? null },
+    props: { entry, category: catById.get(entry.data.category) ?? null },
   }));
 }
 

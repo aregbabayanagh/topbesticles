@@ -14,6 +14,10 @@ export default config({
       schema: {
         title: fields.text({ label: 'Title', description: 'e.g. "CRM Software"' }),
         slug: fields.text({ label: 'Slug', description: 'e.g. "crm"' }),
+        heading: fields.text({
+          label: 'Heading (H1 override)',
+          description: 'Optional. Used as the category page H1 instead of Title. Falls back to Title if empty.',
+        }),
         description: fields.text({
           label: 'Description',
           description: 'Short blurb shown at the top of the category page.',
