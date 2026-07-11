@@ -10,6 +10,12 @@ import Partner from '../components/Partner.astro';
 import { getCollection } from 'astro:content';
 
 const listicles = await getCollection('listicles');
+
+// The listicle `category` field now stores a category slug. Resolve it to the
+// category's display title so the "Browse by category" pills stay readable.
+// (This grid still reads from `listicles` — we'll rewire it to `categories` next step.)
+const categories = await getCollection('categories');
+const categoryTitleBySlug = new Map(categories.map((c) => [c.id, c.data.title]));
 ---
 
 <Base title="TopBesticles — The most complete roundup of the best tools, software & services">
@@ -33,7 +39,7 @@ const listicles = await getCollection('listicles');
             title={entry.data.title}
             slug={entry.id}
             description={entry.data.dek}
-            category={entry.data.category}
+            category={categoryTitleBySlug.get(entry.data.category) ?? entry.data.category}
             lastUpdated={entry.data.lastUpdated}
             heroImage={entry.data.heroImage}
           />

@@ -1,0 +1,51 @@
+---
+import Base from '../../layouts/Base.astro';
+import CategoryCard from '../../components/CategoryCard.astro';
+import { getCollection } from 'astro:content';
+
+// Category hub pages live under /category/<slug> so they can never collide
+// with the flat listicle URLs at the site root.
+export async function getStaticPaths() {
+  const [categories, listicles] = await Promise.all([
+    getCollection('categories'),
+    getCollection('listicles'),
+  ]);
+  return categories.map((category) => ({
+    params: { slug: category.id },
+    props: {
+      category,
+      posts: listicles.filter((l) => l.data.category === category.id),
+    },
+  }));
+}
+
+const { category, posts } = Astro.props;
+const { data } = category;
+---
+<Base title={data.title} description={data.description} metaTitle={data.metaTitle} metaDescription={data.metaDescription}>
+  <section class="block">
+    <div class="wrap">
+      <div class="head">
+        <h2>{data.title}</h2>
+        <p>{data.description}</p>
+      </div>
+
+      {posts.length > 0 ? (
+        <div class="grid">
+          {posts.map((entry) => (
+            <CategoryCard
+              title={entry.data.title}
+              slug={entry.id}
+              description={entry.data.dek}
+              category={data.title}
+              lastUpdated={entry.data.lastUpdated}
+              heroImage={entry.data.heroImage}
+            />
+          ))}
+        </div>
+      ) : (
+        <p style="color:var(--ink-2);">No listicles in this category yet — check back soon.</p>
+      )}
+    </div>
+  </section>
+</Base>

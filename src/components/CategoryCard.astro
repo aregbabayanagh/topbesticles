@@ -19,7 +19,7 @@ const {
   comingSoon = false,
 } = Astro.props;
 
-const href = comingSoon ? undefined : `/listicles/${slug}`;
+const href = comingSoon ? undefined : `/${slug}`;
 
 const updatedLabel = lastUpdated
   ? lastUpdated.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })

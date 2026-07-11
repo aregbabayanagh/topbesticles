@@ -35,13 +35,17 @@ for (const file of fs.readdirSync(listiclesDir)) {
   const slug = file.replace(/\.mdoc$/, '');
   // Convert to a proper ISO date; fall back to build date if missing.
   const lastmod = data.lastUpdated ? new Date(data.lastUpdated).toISOString() : BUILD_DATE;
-  lastmodByPath[`/listicles/${slug}/`] = lastmod;
+  // Listicles are served flat at the root: /<slug>/
+  lastmodByPath[`/${slug}/`] = lastmod;
 }
 
 const integrations = [
   react(),
   markdoc(),
   sitemap({
+    // Keep the old /listicles/<slug> redirect stubs out of the sitemap — only
+    // the new flat /<slug> URLs should be indexed.
+    filter: (page) => !new URL(page).pathname.startsWith('/listicles/'),
     serialize(item) {
       // item.url is the absolute URL; normalise its path to always end in "/".
       const pathname = new URL(item.url).pathname;

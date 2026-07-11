@@ -9,12 +9,21 @@ import Footer from '../components/Footer.astro';
 interface Props {
   title: string;
   description?: string;
+  metaTitle?: string;
+  metaDescription?: string;
 }
 
 const {
   title,
   description = 'Hand-checked best-of lists for software, services, and tools.',
+  metaTitle,
+  metaDescription,
 } = Astro.props;
+
+// SEO: prefer the explicit metaTitle/metaDescription; otherwise fall back to
+// the page title (with brand suffix) and the description.
+const pageTitle = metaTitle ?? `${title} | TopBesticles`;
+const pageDescription = metaDescription ?? description;
 ---
 
 <!doctype html>
@@ -22,8 +31,8 @@ const {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={description} />
-    <title>{title} | TopBesticles</title>
+    <meta name="description" content={pageDescription} />
+    <title>{pageTitle}</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
     <!-- Google Analytics (GA4) — loads on every page via the Base layout.
