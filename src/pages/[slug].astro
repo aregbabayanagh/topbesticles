@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { Image } from 'astro:assets';
 import { getCollection, render } from 'astro:content';
 
 // Listicles are served flat at the site root: /<slug>
@@ -22,82 +23,296 @@ export async function getStaticPaths() {
 const { entry, category } = Astro.props;
 const { data } = entry;
 const { Content } = await render(entry);
+
+// Items in rank order.
+const items = [...data.items].sort((a, b) => a.rank - b.rank);
+
+// Dates.
+const updatedShort = data.lastUpdated.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+const updatedLong = data.lastUpdated.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+const updatedISO = data.lastUpdated.toISOString().slice(0, 10);
+
+// Absolute URLs for structured data.
+const homeUrl = new URL('/', Astro.site).href;
+const pageUrl = new URL(`/${entry.id}/`, Astro.site).href;
+const categoryUrl = category ? new URL(`/category/${category.slug}/`, Astro.site).href : null;
+
+// ── JSON-LD ────────────────────────────────────────────────────────────
+const crumbItems = [{ '@type': 'ListItem', position: 1, name: 'Home', item: homeUrl }];
+if (category && categoryUrl) {
+  crumbItems.push({ '@type': 'ListItem', position: 2, name: category.title, item: categoryUrl });
+}
+crumbItems.push({ '@type': 'ListItem', position: crumbItems.length + 1, name: data.title, item: pageUrl });
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: crumbItems,
+};
+
+const itemListLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: data.title,
+  itemListElement: items.map((item) => ({
+    '@type': 'ListItem',
+    position: item.rank,
+    name: item.name,
+    url: item.url,
+  })),
+};
+
+const faqLd = data.faq.length > 0
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: data.faq.map((f) => ({
+        '@type': 'Question',
+        name: f.question,
+        acceptedAnswer: { '@type': 'Answer', text: f.answer },
+      })),
+    }
+  : null;
 ---
 <Base title={data.title} description={data.dek} metaTitle={data.metaTitle} metaDescription={data.metaDescription}>
-  <div style="max-width:900px;margin:0 auto;padding:2rem 1.5rem 4rem;">
-  {data.heroImage && (
-    <img src={data.heroImage} alt={data.title}
-      style="width:100%;max-height:320px;object-fit:cover;border-radius:12px;margin-bottom:1.5rem;" />
-  )}
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(itemListLd)} />
+  {faqLd && <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />}
 
-  <div style="font-size:0.75rem;color:#6b7280;margin-bottom:0.5rem;">
-    {category ? <a href={`/category/${category.slug}`} style="color:#4f46e5;">{category.title}</a> : data.category}
-  </div>
-  <h1 style="font-size:2rem;font-weight:800;margin-bottom:0.5rem;">{data.title}</h1>
-  <p style="font-size:1.1rem;color:#374151;margin-bottom:0.5rem;">{data.dek}</p>
-  <p style="font-size:0.8rem;color:#9ca3af;margin-bottom:1.5rem;">
-    Last updated: {data.lastUpdated.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-  </p>
+  <article class="listicle">
+    <div class="reading">
+      <!-- 1. Breadcrumbs -->
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep" aria-hidden="true">&rsaquo;</span>
+        {category && (
+          <>
+            <a href={`/category/${category.slug}`}>{category.title}</a>
+            <span class="sep" aria-hidden="true">&rsaquo;</span>
+          </>
+        )}
+        <span aria-current="page">{data.title}</span>
+      </nav>
 
-  {data.intro && (
-    <p style="font-size:1.05rem;color:#374151;margin-bottom:2rem;line-height:1.7;">{data.intro}</p>
-  )}
-
-  <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:1rem 1.25rem;margin-bottom:2rem;">
-    <strong style="color:#1d4ed8;">Quick Answer:</strong> {data.quickAnswer}
-  </div>
-
-  <div style="margin-bottom:2.5rem;line-height:1.8;">
-    <Content />
-  </div>
-
-  <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:1.25rem;">The Rankings</h2>
-  <div style="display:flex;flex-direction:column;gap:1.5rem;margin-bottom:3rem;">
-    {data.items.map((item) => (
-      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:1.5rem;">
-        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.75rem;">
-          <span style="font-size:1.4rem;font-weight:900;color:#4f46e5;">#{item.rank}</span>
-          {item.logo && <img src={item.logo} alt={item.name} width="48" height="48" style="border-radius:8px;" />}
-          <div>
-            <div style="font-weight:700;font-size:1.05rem;">{item.name}</div>
-            <div style="font-size:0.8rem;color:#6b7280;">Best for: {item.bestFor} &bull; From {item.startingPrice}</div>
-          </div>
-          <a href={item.url} target="_blank" rel="noopener"
-            style="margin-left:auto;font-size:0.8rem;padding:0.4rem 0.9rem;background:#4f46e5;color:#fff;border-radius:6px;text-decoration:none;">
-            Visit
-          </a>
+      <!-- 2. Header -->
+      <header class="lc-head">
+        <div class="meta-row">
+          {category && <a class="cat-link" href={`/category/${category.slug}`}>{category.title}</a>}
+          <span class="fresh"><span class="d"></span>Updated {updatedShort}</span>
         </div>
-        <p style="font-size:0.9rem;color:#374151;margin-bottom:0.75rem;">{item.description}</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;font-size:0.85rem;">
-          <div>
-            <strong style="color:#15803d;">Pros</strong>
-            <ul style="margin-top:0.25rem;padding-left:1rem;">
-              {item.pros.map((p) => <li>{p}</li>)}
-            </ul>
-          </div>
-          <div>
-            <strong style="color:#b91c1c;">Cons</strong>
-            <ul style="margin-top:0.25rem;padding-left:1rem;">
-              {item.cons.map((c) => <li>{c}</li>)}
-            </ul>
-          </div>
-        </div>
-      </div>
-    ))}
-  </div>
+        <h1>{data.title}</h1>
+        <p class="dek">{data.dek}</p>
+        <p class="byline">Last updated <time datetime={updatedISO}>{updatedLong}</time></p>
+      </header>
 
-  {data.faq.length > 0 && (
-    <div>
-      <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:1rem;">FAQ</h2>
-      <div style="display:flex;flex-direction:column;gap:1rem;">
-        {data.faq.map((f) => (
-          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:1rem 1.25rem;">
-            <p style="font-weight:600;margin-bottom:0.4rem;">{f.question}</p>
-            <p style="font-size:0.9rem;color:#374151;">{f.answer}</p>
+      <!-- 3. Hero image -->
+      {data.heroImage && (
+        <Image class="hero-img" src={data.heroImage} alt={data.title} width={1200} height={480} loading="eager" />
+      )}
+
+      <!-- 4. Quick answer -->
+      <aside class="quick" aria-label="Quick answer">
+        <div class="quick-label">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>
+          Quick answer
+        </div>
+        <p>{data.quickAnswer}</p>
+      </aside>
+
+      <!-- Intro lede -->
+      {data.intro && <p class="lede">{data.intro}</p>}
+
+      <!-- 5. Comparison table -->
+      <section class="section">
+        <h2 class="sec-title">At a glance</h2>
+        <div class="cmp-wrap">
+          <table class="cmp-table">
+            <thead>
+              <tr><th>Rank</th><th>Name</th><th>Best for</th><th>Starting price</th></tr>
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <tr class={item.rank === 1 ? 'top' : undefined}>
+                  <td class="rk">#{item.rank}</td>
+                  <td class="nm">
+                    {item.name}
+                    {item.rank === 1 && <span class="top-badge">Top pick</span>}
+                  </td>
+                  <td>{item.bestFor}</td>
+                  <td>{item.startingPrice}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 6. Ranked items -->
+      <section class="section">
+        <h2 class="sec-title">The rankings</h2>
+        <div class="items">
+          {items.map((item) => (
+            <div class={`item${item.rank === 1 ? ' featured' : ''}`} id={`rank-${item.rank}`}>
+              <div class="item-head">
+                <span class="rank-badge">#{item.rank}</span>
+                {item.logo && (
+                  <Image class="logo" src={item.logo} alt={`${item.name} logo`} width={56} height={56} loading="lazy" />
+                )}
+                <div class="item-title">
+                  <h2 class="item-name">{item.name}</h2>
+                  <div class="item-sub">
+                    <span class="pill">Best for {item.bestFor}</span>
+                    <span class="price">From {item.startingPrice}</span>
+                  </div>
+                </div>
+                <a class="btn btn-primary btn-sm visit" href={item.url} target="_blank" rel="sponsored nofollow noopener">
+                  Visit {item.name}
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
+                </a>
+              </div>
+              <p class="item-desc">{item.description}</p>
+              <div class="proscons">
+                <div class="pros">
+                  <h3>Pros</h3>
+                  <ul>{item.pros.map((p) => <li>{p}</li>)}</ul>
+                </div>
+                <div class="cons">
+                  <h3>Cons</h3>
+                  <ul>{item.cons.map((c) => <li>{c}</li>)}</ul>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- 7. Rich-text body -->
+      <section class="section prose">
+        <Content />
+      </section>
+
+      <!-- 8. FAQ -->
+      {data.faq.length > 0 && (
+        <section class="section">
+          <h2 class="sec-title">Frequently asked questions</h2>
+          <div class="faq">
+            {data.faq.map((f) => (
+              <div class="faq-item">
+                <h3>{f.question}</h3>
+                <p>{f.answer}</p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </section>
+      )}
+
+      <!-- 9. Closing CTA -->
+      <aside class="closing">
+        <h2>Keep exploring</h2>
+        <p>Every pick above is hand-checked and refreshed as the market moves.</p>
+        <div class="cta-row">
+          {category && <a class="btn btn-primary" href={`/category/${category.slug}`}>More {category.title} lists</a>}
+          <a class="btn-ghost" href="/#categories">Browse all categories</a>
+        </div>
+      </aside>
     </div>
-  )}
-  </div>
+  </article>
 </Base>
+
+<style>
+.listicle{padding:38px 0 20px;}
+.reading{max-width:840px;margin:0 auto;padding:0 24px;}
+
+/* Breadcrumbs */
+.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px;color:var(--ink-3);margin-bottom:26px;}
+.crumbs a{color:var(--ink-2);}
+.crumbs a:hover{color:var(--accent);}
+.crumbs [aria-current]{color:var(--ink);font-weight:600;}
+
+/* Header */
+.lc-head{margin-bottom:26px;}
+.meta-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;}
+.cat-link{font-size:12.5px;font-weight:600;color:var(--accent);background:var(--soft);padding:5px 12px;border-radius:999px;}
+.cat-link:hover{filter:brightness(.96);}
+.lc-head h1{font-weight:700;font-size:clamp(2rem,4vw,3rem);line-height:1.08;letter-spacing:-.025em;}
+.lc-head .dek{font-size:1.2rem;color:var(--ink-2);margin-top:14px;line-height:1.55;max-width:680px;}
+.lc-head .byline{font-size:13px;color:var(--ink-3);margin-top:14px;}
+
+/* Hero */
+.hero-img{width:100%;height:auto;aspect-ratio:12/5;object-fit:cover;border-radius:18px;box-shadow:var(--sh);margin-bottom:30px;}
+
+/* Quick answer */
+.quick{position:relative;background:linear-gradient(135deg,var(--soft) 0%,#E6F7FA 100%);border:1px solid var(--line);border-radius:18px;padding:22px 26px;box-shadow:var(--sh);margin-bottom:28px;overflow:hidden;}
+.quick::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--grad);}
+.quick-label{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);margin-bottom:9px;}
+.quick p{font-size:1.14rem;line-height:1.6;color:var(--ink);font-weight:500;}
+
+/* Intro lede */
+.lede{font-size:1.14rem;line-height:1.75;color:var(--ink-2);margin-bottom:40px;}
+
+/* Sections */
+.section{margin-bottom:44px;}
+.sec-title{font-weight:700;font-size:clamp(1.4rem,2.4vw,1.7rem);letter-spacing:-.02em;margin-bottom:18px;}
+
+/* Comparison table */
+.cmp-wrap{border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--sh);background:var(--card);}
+.cmp-table{width:100%;border-collapse:collapse;font-size:14.5px;}
+.cmp-table thead th{background:var(--bg-2);text-align:left;padding:13px 16px;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-3);font-weight:700;}
+.cmp-table td{padding:14px 16px;border-top:1px solid var(--line);color:var(--ink-2);vertical-align:middle;}
+.cmp-table tbody tr.top{background:linear-gradient(90deg,rgba(109,77,251,.07),rgba(34,211,238,.04));}
+.cmp-table .rk{font-weight:800;color:var(--accent);white-space:nowrap;}
+.cmp-table .nm{font-weight:600;color:var(--ink);}
+.top-badge{display:inline-block;margin-left:8px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:#fff;background:var(--grad);padding:2px 8px;border-radius:999px;vertical-align:middle;}
+
+/* Ranked items */
+.items{display:flex;flex-direction:column;gap:20px;}
+.item{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:var(--sh);scroll-margin-top:90px;}
+.item.featured{border:1.5px solid transparent;background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;box-shadow:var(--sh-h);}
+.item-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.rank-badge{flex:none;width:44px;height:44px;border-radius:12px;background:var(--soft);color:var(--accent);font-weight:800;font-size:15px;display:grid;place-items:center;}
+.item.featured .rank-badge{background:var(--grad);color:#fff;box-shadow:0 8px 20px -6px rgba(109,77,251,.6);}
+.logo{flex:none;width:52px;height:52px;border-radius:12px;border:1px solid var(--line);background:#fff;object-fit:contain;padding:6px;}
+.item-title{display:flex;flex-direction:column;gap:7px;min-width:0;}
+.item-name{font-weight:700;font-size:1.25rem;letter-spacing:-.01em;}
+.item-sub{display:flex;flex-wrap:wrap;align-items:center;gap:10px;}
+.item-sub .price{font-size:13.5px;color:var(--ink-3);font-weight:500;}
+.visit{margin-left:auto;text-decoration:none;white-space:nowrap;}
+.item-desc{margin-top:16px;color:var(--ink-2);line-height:1.7;font-size:15.5px;}
+
+.proscons{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;}
+.proscons h3{font-size:12px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px;font-weight:700;}
+.pros h3{color:var(--fresh);}
+.cons h3{color:#c0392b;}
+.proscons ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.proscons li{position:relative;padding-left:24px;font-size:14.5px;color:var(--ink-2);line-height:1.5;}
+.pros li::before{content:"✓";position:absolute;left:2px;top:-1px;color:var(--fresh);font-weight:800;}
+.cons li::before{content:"✕";position:absolute;left:2px;top:-1px;color:#c0392b;font-weight:800;}
+
+/* Rich-text body */
+.prose :global(h2){font-weight:700;font-size:1.5rem;letter-spacing:-.02em;margin:2.2rem 0 .8rem;}
+.prose :global(h3){font-weight:600;font-size:1.2rem;margin:1.6rem 0 .6rem;}
+.prose :global(p){color:var(--ink-2);line-height:1.8;margin:0 0 1.1rem;font-size:16.5px;}
+.prose :global(ul),.prose :global(ol){margin:0 0 1.2rem 1.3rem;color:var(--ink-2);line-height:1.8;}
+.prose :global(li){margin-bottom:.45rem;}
+.prose :global(a){color:var(--accent);text-decoration:underline;text-underline-offset:2px;}
+.prose :global(strong){color:var(--ink);font-weight:600;}
+.prose :global(blockquote){border-left:3px solid var(--accent);padding-left:16px;color:var(--ink-2);font-style:italic;margin:0 0 1.1rem;}
+
+/* FAQ */
+.faq{display:flex;flex-direction:column;gap:14px;}
+.faq-item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;box-shadow:var(--sh);}
+.faq-item h3{font-weight:600;font-size:1.05rem;margin-bottom:8px;}
+.faq-item p{color:var(--ink-2);line-height:1.65;font-size:15px;}
+
+/* Closing CTA */
+.closing{text-align:center;background:linear-gradient(135deg,var(--soft),#E6F7FA);border:1px solid var(--line);border-radius:20px;padding:40px 28px;box-shadow:var(--sh);margin-top:8px;}
+.closing h2{font-weight:700;font-size:1.5rem;letter-spacing:-.02em;}
+.closing p{color:var(--ink-2);margin-top:10px;}
+.cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:22px;}
+
+@media (max-width:640px){
+  .proscons{grid-template-columns:1fr;}
+  .visit{margin-left:0;width:100%;justify-content:center;}
+  .item-title{flex:1 1 100%;}
+}
+</style>
