@@ -18,6 +18,23 @@ const countByCategory = new Map<string, number>();
 for (const l of listicles) {
   countByCategory.set(l.data.category, (countByCategory.get(l.data.category) ?? 0) + 1);
 }
+
+// The homepage grid shows at most 4 categories. If any category is marked
+// `featured`, only featured categories compete for those slots; otherwise
+// every category does. `order` (ascending) breaks ties within that pool —
+// unset/equal `order` values fall back to alphabetical by title.
+const pool = categories.some((c) => c.data.featured)
+  ? categories.filter((c) => c.data.featured)
+  : categories;
+const featuredCategories = [...pool]
+  .sort((a, b) => {
+    const orderDiff = (a.data.order ?? Infinity) - (b.data.order ?? Infinity);
+    return orderDiff !== 0 ? orderDiff : a.data.title.localeCompare(b.data.title);
+  })
+  .slice(0, 4);
+
+// Fill any remaining slots (up to 4 total) with "Coming soon" placeholders.
+const placeholderSlots = Math.max(0, 4 - featuredCategories.length);
 ---
 
 <Base title="TopBesticles — The most complete roundup of the best tools, software & services">
@@ -36,7 +53,7 @@ for (const l of listicles) {
         <p>Short, honest shortlists for the decisions that matter.</p>
       </div>
       <div class="grid">
-        {categories.map((cat, i) => (
+        {featuredCategories.map((cat, i) => (
           <CategoryCard
             title={cat.data.title}
             href={`/category/${cat.id}`}
@@ -47,7 +64,8 @@ for (const l of listicles) {
           />
         ))}
 
-        <!-- Coming soon placeholders -->
+        <!-- Coming soon placeholders — fill remaining slots up to 4 total -->
+        {placeholderSlots >= 1 && (
         <CategoryCard
           title="Best Email Marketing Platforms"
           description="In research now — testing deliverability and real pricing."
@@ -76,7 +94,9 @@ for (const l of listicles) {
             <circle cx="162" cy="179" r="4" fill="#fff" fill-opacity="0.85"/>
           </svg>
         </CategoryCard>
+        )}
 
+        {placeholderSlots >= 2 && (
         <CategoryCard
           title="Best Project Management Software"
           description="Candidate list being built and verified."
@@ -105,7 +125,9 @@ for (const l of listicles) {
             <circle cx="136" cy="41" r="6" fill="#fff"/>
           </svg>
         </CategoryCard>
+        )}
 
+        {placeholderSlots >= 3 && (
         <CategoryCard
           title="Best AI Writing Tools"
           description="Putting the top contenders through real tasks."
@@ -134,9 +156,18 @@ for (const l of listicles) {
             <circle cx="139" cy="136" r="4" fill="#fff" fill-opacity="0.85"/>
           </svg>
         </CategoryCard>
+        )}
+      </div>
+
+      <div class="view-all">
+        <a class="btn-ghost" href="/category">View all categories</a>
       </div>
     </div>
   </section>
 
   <Partner />
 </Base>
+
+<style>
+.view-all{text-align:center;margin-top:36px;}
+</style>

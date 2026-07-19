@@ -23,6 +23,16 @@ export default config({
           description: 'Short blurb shown at the top of the category page.',
           multiline: true,
         }),
+        featured: fields.checkbox({
+          label: 'Featured on homepage',
+          description: 'If any category is featured, only featured categories compete for the homepage grid’s 4 slots.',
+          defaultValue: false,
+        }),
+        order: fields.integer({
+          label: 'Order',
+          description: 'Lower numbers appear first in the homepage grid. Leave empty to fall back to alphabetical.',
+          validation: { isRequired: false },
+        }),
         coverImage: fields.image({
           label: 'Cover Image',
           directory: 'public/images/categories',

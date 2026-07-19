@@ -11,6 +11,12 @@ const categories = defineCollection({
     // Optional H1 override for the category page; falls back to `title`.
     heading: z.string().optional(),
     description: z.string(),
+    // Homepage "Browse by category" grid shows at most 4 cards. When any
+    // category is marked `featured`, only featured categories compete for
+    // those slots; otherwise all categories do. `order` (ascending) breaks
+    // ties within that pool — unset/equal values fall back to alphabetical.
+    featured: z.boolean().optional(),
+    order: z.number().optional(),
     coverImage: z.string().optional(),
     metaTitle: z.string().optional(),
     metaDescription: z.string().optional(),
