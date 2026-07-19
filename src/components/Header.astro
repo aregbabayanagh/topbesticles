@@ -5,7 +5,7 @@
   <div class="wrap">
     <a class="logo" href="/"><span class="t">Top</span>Besticles</a>
     <nav class="main">
-      <a class="hide" href="/#categories">Categories</a>
+      <a class="hide" href="/category">Categories</a>
       <a class="hide" href="/#cited">Cited in AI</a>
       <a class="hide" href="/#why">Why us</a>
       <a class="btn btn-primary btn-sm" href="/#partner">Get in touch</a>
@@ -21,5 +21,9 @@ header.site .wrap{height:74px;display:flex;align-items:center;justify-content:sp
 nav.main{display:flex;gap:28px;align-items:center;}
 nav.main a{color:var(--ink-2);font-weight:500;font-size:15px;}
 nav.main a:hover{color:var(--ink);}
+/* .btn-primary's own `color:#fff` loses to `nav.main a` above on specificity
+   alone — pin it back to white here (and on hover) so it isn't inherited. */
+nav.main a.btn-primary,
+nav.main a.btn-primary:hover{color:#fff;}
 @media(max-width:820px){nav.main .hide{display:none;}}
 </style>
