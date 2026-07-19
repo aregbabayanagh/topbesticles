@@ -36,10 +36,10 @@ const pageDescription = metaDescription ?? description;
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
     <!-- Google Analytics (GA4) — loads on every page via the Base layout. -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CMJQVQYJ7G"></script>
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-CMJQVQYJ7G"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){ dataLayer.push(arguments); }
+      function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-CMJQVQYJ7G');
     </script>
