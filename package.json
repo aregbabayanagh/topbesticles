@@ -10,7 +10,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "publish": "git add -A && git commit -m \"Content update $(date '+%Y-%m-%d %H:%M')\" && git push"
+    "ship": "git add -A && git commit -m \"Content update $(date '+%Y-%m-%d %H:%M')\" && git push"
   },
   "dependencies": {
     "@astrojs/markdoc": "^1.0.6",
