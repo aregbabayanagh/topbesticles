@@ -59,6 +59,7 @@ const itemListLd = {
     position: item.rank,
     name: item.name,
     url: item.url,
+    description: item.description,
   })),
 };
 
@@ -126,24 +127,26 @@ const faqLd = data.faq.length > 0
       <section class="section">
         <h2 class="sec-title">At a glance</h2>
         <div class="cmp-wrap">
-          <table class="cmp-table">
-            <thead>
-              <tr><th>Rank</th><th>Name</th><th>Best for</th><th>Starting price</th></tr>
-            </thead>
-            <tbody>
-              {items.map((item) => (
-                <tr class={item.rank === 1 ? 'top' : undefined}>
-                  <td class="rk">#{item.rank}</td>
-                  <td class="nm">
-                    {item.name}
-                    {item.rank === 1 && <span class="top-badge">Top pick</span>}
-                  </td>
-                  <td>{item.bestFor}</td>
-                  <td>{item.startingPrice}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div class="table-scroll">
+            <table class="cmp-table">
+              <thead>
+                <tr><th>Rank</th><th>Name</th><th>Best for</th><th>Starting price</th></tr>
+              </thead>
+              <tbody>
+                {items.map((item) => (
+                  <tr class={item.rank === 1 ? 'top' : undefined}>
+                    <td class="rk">#{item.rank}</td>
+                    <td class="nm">
+                      {item.name}
+                      {item.rank === 1 && <span class="top-badge">Top pick</span>}
+                    </td>
+                    <td>{item.bestFor}</td>
+                    <td>{item.startingPrice}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -151,38 +154,83 @@ const faqLd = data.faq.length > 0
       <section class="section">
         <h2 class="sec-title">The rankings</h2>
         <div class="items">
-          {items.map((item) => (
-            <div class={`item${item.rank === 1 ? ' featured' : ''}`} id={`rank-${item.rank}`}>
-              <div class="item-head">
-                <span class="rank-badge">#{item.rank}</span>
-                {item.logo && (
-                  <Image class="logo" src={item.logo} alt={`${item.name} logo`} width={56} height={56} loading="lazy" />
-                )}
-                <div class="item-title">
-                  <h2 class="item-name">{item.name}</h2>
-                  <div class="item-sub">
-                    <span class="pill">Best for {item.bestFor}</span>
-                    <span class="price">From {item.startingPrice}</span>
+          {items.map((item) => {
+            // "First paragraph" = up to the first blank-line break; anything
+            // after that (rare today, but the field supports multiline text)
+            // goes behind the Read more toggle along with facts/pros/cons.
+            const paragraphs = item.description.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+            const [firstParagraph, ...restParagraphs] = paragraphs.length > 0 ? paragraphs : [item.description];
+            const facts = [
+              { label: 'Founded', value: item.founded },
+              { label: 'Headquarters', value: item.headquarters },
+              { label: 'Founders', value: item.founders },
+              { label: 'Notable clients', value: item.notableClients },
+              { label: 'Reviews', value: item.reviewScore },
+            ].filter((f) => f.value);
+
+            return (
+              <div class={`item${item.rank === 1 ? ' featured' : ''}`} id={`rank-${item.rank}`}>
+                <div class="item-head">
+                  <span class="rank-badge">#{item.rank}</span>
+                  {item.logo && (
+                    <Image class="logo" src={item.logo} alt={`${item.name} logo`} width={56} height={56} loading="lazy" />
+                  )}
+                  <div class="item-title">
+                    <h2 class="item-name">{item.name}</h2>
+                    <p class="starting-price">{item.startingPrice}</p>
+                    <div class="item-sub">
+                      <span class="pill">Best for {item.bestFor}</span>
+                      {item.sponsored && <span class="sponsored-badge">Sponsored</span>}
+                    </div>
                   </div>
+                  <a
+                    class="btn btn-primary btn-sm visit"
+                    href={item.url}
+                    target="_blank"
+                    rel={item.sponsored ? 'sponsored noopener' : 'noopener'}
+                  >
+                    Visit {item.name}
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
+                  </a>
                 </div>
-                <a class="btn btn-primary btn-sm visit" href={item.url} target="_blank" rel="sponsored nofollow noopener">
-                  Visit {item.name}
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
-                </a>
+
+                <p class="item-desc">{firstParagraph}</p>
+
+                <details class="item-more">
+                  <summary>
+                    <span class="label-closed">Read more about {item.name}</span>
+                    <span class="label-open">Show less</span>
+                    <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                  </summary>
+                  <div class="more-body">
+                    {restParagraphs.map((p) => <p class="item-desc">{p}</p>)}
+
+                    {facts.length > 0 && (
+                      <dl class="facts">
+                        {facts.map((f) => (
+                          <div class="facts-row">
+                            <dt>{f.label}</dt>
+                            <dd>{f.value}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    )}
+
+                    <div class="proscons">
+                      <div class="pros">
+                        <h3>Pros</h3>
+                        <ul>{item.pros.map((p) => <li>{p}</li>)}</ul>
+                      </div>
+                      <div class="cons">
+                        <h3>Cons</h3>
+                        <ul>{item.cons.map((c) => <li>{c}</li>)}</ul>
+                      </div>
+                    </div>
+                  </div>
+                </details>
               </div>
-              <p class="item-desc">{item.description}</p>
-              <div class="proscons">
-                <div class="pros">
-                  <h3>Pros</h3>
-                  <ul>{item.pros.map((p) => <li>{p}</li>)}</ul>
-                </div>
-                <div class="cons">
-                  <h3>Cons</h3>
-                  <ul>{item.cons.map((c) => <li>{c}</li>)}</ul>
-                </div>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
@@ -274,10 +322,31 @@ const faqLd = data.faq.length > 0
 .logo{flex:none;width:52px;height:52px;border-radius:12px;border:1px solid var(--line);background:#fff;object-fit:contain;padding:6px;}
 .item-title{display:flex;flex-direction:column;gap:7px;min-width:0;}
 .item-name{font-weight:700;font-size:1.25rem;letter-spacing:-.01em;}
+.starting-price{font-size:14px;color:var(--ink-2);font-weight:600;}
 .item-sub{display:flex;flex-wrap:wrap;align-items:center;gap:10px;}
-.item-sub .price{font-size:13.5px;color:var(--ink-3);font-weight:500;}
+.sponsored-badge{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#9a6a00;background:#fff3d6;border:1px solid #f0d999;padding:3px 9px;border-radius:999px;}
 .visit{margin-left:auto;text-decoration:none;white-space:nowrap;}
 .item-desc{margin-top:16px;color:var(--ink-2);line-height:1.7;font-size:15.5px;}
+
+/* Read more toggle — native <details>, so collapsed content stays in the
+   static HTML for crawlers; the browser (not JS) hides it until opened. */
+.item-more{margin-top:14px;}
+.item-more summary{cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:14px;color:var(--accent);list-style:none;user-select:none;}
+.item-more summary::-webkit-details-marker{display:none;}
+.item-more summary:hover{color:var(--accent-2);}
+.item-more .chev{flex:none;transition:transform .2s;}
+.item-more[open] .chev{transform:rotate(180deg);}
+.item-more .label-open{display:none;}
+.item-more[open] .label-closed{display:none;}
+.item-more[open] .label-open{display:inline;}
+.more-body{margin-top:18px;padding-top:18px;border-top:1px solid var(--line);}
+.more-body .item-desc{margin-top:0;margin-bottom:16px;}
+
+/* Facts block */
+.facts{margin:0 0 20px;display:flex;flex-wrap:wrap;gap:10px;}
+.facts-row{margin:0;display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:10px 14px;background:var(--bg-2);border-radius:10px;max-width:100%;}
+.facts-row dt{margin:0;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-3);}
+.facts-row dd{margin:0;font-size:14px;color:var(--ink);font-weight:600;text-align:left;}
 
 .proscons{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;}
 .proscons h3{font-size:12px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px;font-weight:700;}

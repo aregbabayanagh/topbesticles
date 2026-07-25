@@ -52,6 +52,12 @@ const listicles = defineCollection({
         description: z.string(),
         pros: z.array(z.string()),
         cons: z.array(z.string()),
+        founded: z.string().optional(),
+        headquarters: z.string().optional(),
+        founders: z.string().optional(),
+        notableClients: z.string().optional(),
+        reviewScore: z.string().optional(),
+        sponsored: z.boolean().optional(),
       })
     ),
     faq: z.array(

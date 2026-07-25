@@ -107,6 +107,16 @@ section.block[id]{scroll-margin-top:94px;}
 /* ── Category grid ─────────────────────────────────────── */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px;}
 
+/* ── Scrollable tables ─────────────────────────────────────
+   Shared, site-wide fix for tables on narrow screens: wrap any table in
+   <div class="table-scroll"> and it scrolls sideways instead of squashing
+   its columns into unreadable slivers. Used by the homepage showcase
+   mockup, the listicle comparison table, and (via markdoc.config.mjs)
+   any table an author adds to a listicle's body content — so every
+   current and future table on the site inherits this automatically. */
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.table-scroll table{min-width:480px;}
+
 /* ── Responsive ────────────────────────────────────────── */
 @media(max-width:820px){
   .sc-grid{grid-template-columns:1fr!important;gap:30px!important;}

@@ -1,0 +1,12 @@
+---
+// Wraps a Markdoc `table` node so any table an author writes into a
+// listicle's body content scrolls sideways on narrow screens instead of
+// squashing, exactly like the homepage showcase mockup and the listicle
+// comparison table. The actual scroll mechanics live in the shared
+// `.table-scroll` rule in src/layouts/Base.astro's global stylesheet.
+---
+<div class="table-scroll">
+  <table>
+    <slot />
+  </table>
+</div>

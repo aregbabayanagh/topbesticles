@@ -106,6 +106,35 @@ export default config({
               label: 'Cons',
               itemLabel: (props) => props.fields.value.value ?? 'Con',
             }),
+            founded: fields.text({
+              label: 'Founded',
+              description: 'e.g. "2006"',
+              validation: { isRequired: false },
+            }),
+            headquarters: fields.text({
+              label: 'Headquarters',
+              description: 'e.g. "Sarasota, Florida"',
+              validation: { isRequired: false },
+            }),
+            founders: fields.text({
+              label: 'Founders',
+              description: 'e.g. "Jeremiah Smith, Sean Smith"',
+              validation: { isRequired: false },
+            }),
+            notableClients: fields.text({
+              label: 'Notable Clients',
+              description: 'Comma-separated',
+              validation: { isRequired: false },
+            }),
+            reviewScore: fields.text({
+              label: 'Review Score',
+              description: 'e.g. "5.0 on Clutch"',
+              validation: { isRequired: false },
+            }),
+            sponsored: fields.checkbox({
+              label: 'Sponsored',
+              defaultValue: false,
+            }),
           }),
           {
             label: 'Items',

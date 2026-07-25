@@ -32,17 +32,19 @@
             <div class="cat">Real estate tech</div>
             <h3>Best Real Estate CRM Software (2026)</h3>
             <span class="fresh"><span class="d"></span>Updated May 2026</span>
-            <table>
-              <thead>
-                <tr><th>#</th><th>Tool</th><th>Best for</th><th>Price</th></tr>
-              </thead>
-              <tbody>
-                <tr class="top"><td class="rk"><span>1</span></td><td class="nm">Apex CRM <span class="toptag">Top pick</span></td><td class="bf">Teams &amp; speed-to-lead</td><td class="pr">$69/mo</td></tr>
-                <tr><td class="rk"><span>2</span></td><td class="nm">Northstar</td><td class="bf">All-in-one + IDX site</td><td class="pr">$499/mo</td></tr>
-                <tr><td class="rk"><span>3</span></td><td class="nm">Brightline</td><td class="bf">AI-driven automation</td><td class="pr">Custom</td></tr>
-                <tr><td class="rk"><span>4</span></td><td class="nm">Harbor</td><td class="bf">Budget solo agents</td><td class="pr">$39/mo</td></tr>
-              </tbody>
-            </table>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr><th>#</th><th>Tool</th><th>Best for</th><th>Price</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="top"><td class="rk"><span>1</span></td><td class="nm">Apex CRM <span class="toptag">Top pick</span></td><td class="bf">Teams &amp; speed-to-lead</td><td class="pr">$69/mo</td></tr>
+                  <tr><td class="rk"><span>2</span></td><td class="nm">Northstar</td><td class="bf">All-in-one + IDX site</td><td class="pr">$499/mo</td></tr>
+                  <tr><td class="rk"><span>3</span></td><td class="nm">Brightline</td><td class="bf">AI-driven automation</td><td class="pr">Custom</td></tr>
+                  <tr><td class="rk"><span>4</span></td><td class="nm">Harbor</td><td class="bf">Budget solo agents</td><td class="pr">$39/mo</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -52,6 +54,11 @@
 
 <style>
 .sc-grid{display:grid;grid-template-columns:0.85fr 1.15fr;gap:54px;align-items:center;}
+/* Grid items default to min-width:auto, which refuses to shrink below the
+   table's min-width and drags the whole card past the viewport on mobile.
+   min-width:0 lets .sc-right shrink to the actual track width so the table's
+   overflow is contained by .table-scroll instead of blowing out the page. */
+.sc-right{min-width:0;}
 .sc-left h2{font-weight:700;font-size:clamp(1.9rem,3.2vw,2.5rem);letter-spacing:-.02em;line-height:1.12;}
 .sc-left p.sub{color:var(--ink-2);font-size:1.06rem;margin-top:14px;max-width:430px;}
 .pts{margin-top:26px;display:flex;flex-direction:column;gap:16px;}
@@ -66,7 +73,11 @@
 .screen{padding:26px 28px 30px;}
 .screen .cat{color:var(--accent);font-weight:600;font-size:13px;}
 .screen h3{font-weight:700;font-size:1.5rem;letter-spacing:-.01em;margin:6px 0 12px;}
-table{width:100%;border-collapse:collapse;margin-top:18px;font-size:14.5px;}
+/* Horizontal-scroll mechanics (overflow-x, min-width) live in the shared
+   .table-scroll rule in Base.astro's global stylesheet; this component only
+   adds its own spacing/typography on top of that. */
+.table-scroll{margin-top:18px;}
+table{width:100%;border-collapse:collapse;font-size:14.5px;}
 thead th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-3);font-weight:600;padding:0 12px 10px;}
 tbody td{padding:14px 12px;border-top:1px solid var(--line);}
 .rk span{display:grid;place-items:center;width:24px;height:24px;border-radius:7px;background:var(--bg-2);font-weight:700;font-size:13px;color:var(--ink-2);}
