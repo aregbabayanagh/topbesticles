@@ -187,7 +187,11 @@ const faqLd = data.faq.length > 0
                     class="btn btn-primary btn-sm visit"
                     href={item.url}
                     target="_blank"
-                    rel={item.sponsored ? 'sponsored noopener' : 'noopener'}
+                    rel={[
+                      item.sponsored && 'sponsored',
+                      item.linkRel === 'nofollow' && 'nofollow',
+                      'noopener',
+                    ].filter(Boolean).join(' ')}
                   >
                     Visit {item.name}
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
@@ -260,7 +264,7 @@ const faqLd = data.faq.length > 0
         <p>Every pick above is hand-checked and refreshed as the market moves.</p>
         <div class="cta-row">
           {category && <a class="btn btn-primary" href={`/category/${category.slug}`}>More {category.title} lists</a>}
-          <a class="btn-ghost" href="/#categories">Browse all categories</a>
+          <a class="btn-ghost" href="/category">Browse all categories</a>
         </div>
       </aside>
     </div>

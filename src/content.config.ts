@@ -57,7 +57,11 @@ const listicles = defineCollection({
         founders: z.string().optional(),
         notableClients: z.string().optional(),
         reviewScore: z.string().optional(),
+        // Independent controls for the outbound link's rel attribute:
+        // `sponsored` drives both rel="sponsored" and the visible badge;
+        // `linkRel` independently drives rel="nofollow". See [slug].astro.
         sponsored: z.boolean().optional(),
+        linkRel: z.enum(['follow', 'nofollow']).optional(),
       })
     ),
     faq: z.array(

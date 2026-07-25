@@ -71,6 +71,7 @@ export default config({
           label: 'Hero Image',
           directory: 'public/images/listicles',
           publicPath: '/images/listicles/',
+          validation: { isRequired: false },
         }),
         quickAnswer: fields.text({ label: 'Quick Answer' }),
         lastUpdated: fields.date({ label: 'Last Updated' }),
@@ -93,6 +94,7 @@ export default config({
               label: 'Logo',
               directory: 'public/images/items',
               publicPath: '/images/items/',
+              validation: { isRequired: false },
             }),
             url: fields.url({ label: 'URL' }),
             startingPrice: fields.text({ label: 'Starting Price' }),
@@ -100,11 +102,11 @@ export default config({
             description: fields.text({ label: 'Description', multiline: true }),
             pros: fields.array(fields.text({ label: 'Pro' }), {
               label: 'Pros',
-              itemLabel: (props) => props.fields.value.value ?? 'Pro',
+              itemLabel: (props) => props.value ?? 'Pro',
             }),
             cons: fields.array(fields.text({ label: 'Con' }), {
               label: 'Cons',
-              itemLabel: (props) => props.fields.value.value ?? 'Con',
+              itemLabel: (props) => props.value ?? 'Con',
             }),
             founded: fields.text({
               label: 'Founded',
@@ -133,7 +135,17 @@ export default config({
             }),
             sponsored: fields.checkbox({
               label: 'Sponsored',
+              description: 'Paid/partner placement. Drives the visible "Sponsored" badge and adds rel="sponsored" to the outbound link.',
               defaultValue: false,
+            }),
+            linkRel: fields.select({
+              label: 'Link follow/nofollow',
+              description: 'Independent of Sponsored — controls whether the outbound link adds rel="nofollow".',
+              options: [
+                { label: 'Follow', value: 'follow' },
+                { label: 'Nofollow', value: 'nofollow' },
+              ],
+              defaultValue: 'follow',
             }),
           }),
           {
