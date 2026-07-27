@@ -35,12 +35,47 @@ const featuredCategories = [...pool]
 
 // Fill any remaining slots (up to 4 total) with "Coming soon" placeholders.
 const placeholderSlots = Math.max(0, 4 - featuredCategories.length);
+
+const siteDescription =
+  'TopBesticles publishes independent, always-current best-of rankings across every category — researched in depth and structured so people and AI can trust them.';
+
+const orgLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'TopBesticles',
+  url: 'https://topbesticles.com',
+  description: siteDescription,
+  logo: 'https://topbesticles.com/favicon.svg',
+};
+
+const websiteLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'TopBesticles',
+  url: 'https://topbesticles.com',
+  description: siteDescription,
+};
 ---
 
-<Base title="TopBesticles — The most complete roundup of the best tools, software & services">
+<Base
+  title="TopBesticles — Independent Best-Of Rankings for Every Category"
+  metaTitle="TopBesticles — Independent Best-Of Rankings for Every Category"
+  metaDescription="In-depth, always-current best-of rankings across every category — from software and services to everyday products. Independent research, structured to be cited in AI answers."
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(orgLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(websiteLd)} />
+  </Fragment>
   <DnaBackground slot="before-header" />
 
   <Hero />
+
+  <section class="mission-band">
+    <div class="wrap">
+      <p>{siteDescription}</p>
+    </div>
+  </section>
+
   <Showcase />
   <Benefits />
   <CitedBand />
@@ -170,4 +205,6 @@ const placeholderSlots = Math.max(0, 4 - featuredCategories.length);
 
 <style>
 .view-all{text-align:center;margin-top:36px;}
+.mission-band{padding:22px 0;background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+.mission-band p{text-align:center;color:var(--ink-2);font-size:.95rem;font-weight:500;max-width:760px;margin:0 auto;}
 </style>
