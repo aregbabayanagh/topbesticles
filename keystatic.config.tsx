@@ -98,6 +98,11 @@ export default config({
           publicPath: "/images/categories/",
           validation: { isRequired: false },
         }),
+        coverImageAlt: fields.text({
+          label: "Cover Image Alt Text",
+          description: 'Describe the image for screen readers/SEO. Falls back to the category title if left empty. Only matters if Cover Image is set — otherwise the generated cover art is decorative.',
+          validation: { isRequired: false },
+        }),
         metaTitle: fields.text({ label: "Meta Title (SEO)" }),
         metaDescription: fields.text({
           label: "Meta Description (SEO)",
@@ -136,6 +141,11 @@ export default config({
           publicPath: "/images/listicles/",
           validation: { isRequired: false },
         }),
+        heroImageAlt: fields.text({
+          label: "Hero Image Alt Text",
+          description: 'Describe the image for screen readers/SEO. Falls back to the listicle title if left empty. Only matters if Hero Image is set — otherwise the generated cover art is decorative.',
+          validation: { isRequired: false },
+        }),
         quickAnswer: fields.text({ label: "Quick Answer" }),
         lastUpdated: fields.date({ label: "Last Updated" }),
         metaTitle: fields.text({ label: "Meta Title (SEO)" }),
@@ -161,6 +171,11 @@ export default config({
               label: "Logo",
               directory: "public/images/items",
               publicPath: "/images/items/",
+              validation: { isRequired: false },
+            }),
+            logoAlt: fields.text({
+              label: "Logo Alt Text",
+              description: "Falls back to \"<name> logo\" if left empty.",
               validation: { isRequired: false },
             }),
             url: fields.url({ label: "URL" }),

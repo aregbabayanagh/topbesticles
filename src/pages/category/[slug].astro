@@ -1,6 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
 import CategoryCard from '../../components/CategoryCard.astro';
+import ConstellationCover from '../../components/ConstellationCover.astro';
+import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 
 // Category hub pages live under /category/<slug> so they can never collide
@@ -28,6 +30,15 @@ const { data } = category;
 // and the listicle's category link keep using `title`.
 const h1 = data.heading || data.title;
 
+// Deterministic (not random) so a given category always gets the same
+// fallback palette across builds/requests, while different categories vary.
+function paletteVariant(id: string) {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+  return hash % 4;
+}
+const coverVariant = paletteVariant(category.id);
+
 const count = posts.length;
 const countLabel = `${count} ${count === 1 ? 'list' : 'lists'} in ${data.title}`;
 
@@ -54,6 +65,16 @@ const breadcrumbLd = {
         <span aria-current="page">{data.title}</span>
       </nav>
 
+      <!-- Cover banner (falls back to generated cover art when unset, so
+           the page never has a blank gap where the image would be) -->
+      {data.coverImage ? (
+        <Image class="cat-cover" src={data.coverImage} alt={data.coverImageAlt || h1} width={1200} height={340} loading="eager" />
+      ) : (
+        <div class="cat-cover cat-cover-fallback">
+          <ConstellationCover variant={coverVariant} />
+        </div>
+      )}
+
       <div class="cat-head">
         <h1>{h1}</h1>
         <p class="cat-desc">{data.description}</p>
@@ -77,7 +98,7 @@ const breadcrumbLd = {
           </div>
 
           <div class="grid" id="cat-grid">
-            {posts.map((entry) => (
+            {posts.map((entry, i) => (
               <CategoryCard
                 title={entry.data.title}
                 slug={entry.id}
@@ -85,6 +106,8 @@ const breadcrumbLd = {
                 category={data.title}
                 lastUpdated={entry.data.lastUpdated}
                 heroImage={entry.data.heroImage}
+                heroImageAlt={entry.data.heroImageAlt}
+                coverVariant={i}
                 search={`${entry.data.title} ${entry.data.dek} ${entry.data.tags.join(' ')}`.toLowerCase()}
               />
             ))}
@@ -137,6 +160,10 @@ const breadcrumbLd = {
 .crumbs a:hover{color:var(--accent);}
 .crumbs .sep{color:var(--ink-3);}
 .crumbs [aria-current]{color:var(--ink);font-weight:600;}
+
+.cat-cover{width:100%;height:auto;aspect-ratio:18/5;object-fit:cover;border-radius:18px;box-shadow:var(--sh);margin-bottom:28px;}
+.cat-cover-fallback{overflow:hidden;}
+.cat-cover-fallback svg{width:100%;height:100%;display:block;}
 
 .cat-head{max-width:720px;margin-bottom:32px;}
 .cat-head h1{font-weight:700;font-size:clamp(2rem,3.6vw,2.9rem);letter-spacing:-.02em;line-height:1.1;}

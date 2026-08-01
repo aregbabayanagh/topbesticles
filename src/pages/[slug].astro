@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import { Image } from 'astro:assets';
 import { getCollection, render } from 'astro:content';
+import ConstellationCover from '../components/ConstellationCover.astro';
 
 // Listicles are served flat at the site root: /<slug>
 export async function getStaticPaths() {
@@ -106,9 +107,14 @@ const faqLd = data.faq.length > 0
         <p class="byline">Last updated <time datetime={updatedISO}>{updatedLong}</time></p>
       </header>
 
-      <!-- 3. Hero image -->
-      {data.heroImage && (
-        <Image class="hero-img" src={data.heroImage} alt={data.title} width={1200} height={480} loading="eager" />
+      <!-- 3. Hero image (falls back to generated cover art when unset, so
+           the page never has a blank gap where the hero would be) -->
+      {data.heroImage ? (
+        <Image class="hero-img" src={data.heroImage} alt={data.heroImageAlt || data.title} width={1200} height={480} loading="eager" />
+      ) : (
+        <div class="hero-img hero-fallback">
+          <ConstellationCover />
+        </div>
       )}
 
       <!-- 4. Quick answer -->
@@ -173,7 +179,7 @@ const faqLd = data.faq.length > 0
                 <div class="item-head">
                   <span class="rank-badge">#{item.rank}</span>
                   {item.logo && (
-                    <Image class="logo" src={item.logo} alt={`${item.name} logo`} width={56} height={56} loading="lazy" />
+                    <Image class="logo" src={item.logo} alt={item.logoAlt || `${item.name} logo`} width={56} height={56} loading="lazy" />
                   )}
                   <div class="item-title">
                     <h2 class="item-name">{item.name}</h2>
@@ -292,6 +298,8 @@ const faqLd = data.faq.length > 0
 
 /* Hero */
 .hero-img{width:100%;height:auto;aspect-ratio:12/5;object-fit:cover;border-radius:18px;box-shadow:var(--sh);margin-bottom:30px;}
+.hero-fallback{overflow:hidden;}
+.hero-fallback svg{width:100%;height:100%;display:block;}
 
 /* Quick answer */
 .quick{position:relative;background:linear-gradient(135deg,var(--soft) 0%,#E6F7FA 100%);border:1px solid var(--line);border-radius:18px;padding:22px 26px;box-shadow:var(--sh);margin-bottom:28px;overflow:hidden;}

@@ -29,7 +29,13 @@ export async function getStaticPaths() {
     })),
     ...listicles.map((listicle) => ({
       params: { slug: listicle.id },
-      props: { title: listicle.data.title, subtitle: undefined },
+      // A listicle with its own featured image uses that as the OG backdrop
+      // instead of the generic branded template — see og-image.ts.
+      props: {
+        title: listicle.data.title,
+        subtitle: undefined,
+        backgroundImagePath: listicle.data.heroImage,
+      },
     })),
   ];
 
@@ -37,8 +43,12 @@ export async function getStaticPaths() {
 }
 
 export const GET: APIRoute = async ({ props }) => {
-  const { title, subtitle } = props as { title: string; subtitle?: string };
-  const png = await renderOgImage({ title, subtitle });
+  const { title, subtitle, backgroundImagePath } = props as {
+    title: string;
+    subtitle?: string;
+    backgroundImagePath?: string;
+  };
+  const png = await renderOgImage({ title, subtitle, backgroundImagePath });
 
   return new Response(new Uint8Array(png), {
     headers: {

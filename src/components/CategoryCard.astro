@@ -11,8 +11,10 @@ interface Props {
   category?: string;
   lastUpdated?: Date;
   heroImage?: string;
+  heroImageAlt?: string;
   // Category-card fields (used on the homepage "Browse by category" grid)
   coverImage?: string;
+  coverImageAlt?: string;
   count?: number;
   coverVariant?: number;
   comingSoon?: boolean;
@@ -28,12 +30,18 @@ const {
   category,
   lastUpdated,
   heroImage,
+  heroImageAlt,
   coverImage,
+  coverImageAlt,
   count,
   coverVariant = 0,
   comingSoon = false,
   search,
 } = Astro.props;
+
+// Alt text prefers the editor-written value; falls back to the title so
+// nothing breaks (or ships blank alt text) when it's left empty.
+const imageAlt = coverImage ? (coverImageAlt || title) : (heroImageAlt || title);
 
 // Presence of `count` marks a category card; otherwise it's a listicle card.
 const isCategory = count !== undefined;
@@ -64,15 +72,11 @@ const countLabel = isCategory ? `${count} ${count === 1 ? 'list' : 'lists'}` : n
   <a class="ccard" href={link} data-search={search}>
     <div class="thumb">
       {coverImage ? (
-        <Image src={coverImage} alt={title} width={400} height={230} loading="lazy" />
+        <Image src={coverImage} alt={imageAlt} width={400} height={230} loading="lazy" />
       ) : heroImage ? (
-        <img src={heroImage} alt={title} width="400" height="230" loading="lazy" />
-      ) : isCategory ? (
-        <ConstellationCover variant={coverVariant} />
+        <Image src={heroImage} alt={imageAlt} width={400} height={230} loading="lazy" />
       ) : (
-        <slot name="thumb">
-          <div class="thumb-default"></div>
-        </slot>
+        <ConstellationCover variant={coverVariant} />
       )}
     </div>
     <div class="cb">

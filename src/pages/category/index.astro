@@ -74,6 +74,7 @@ const breadcrumbLd = {
                 href={`/category/${cat.id}`}
                 description={cat.data.description}
                 coverImage={cat.data.coverImage}
+                coverImageAlt={cat.data.coverImageAlt}
                 count={countByCategory.get(cat.id) ?? 0}
                 coverVariant={i}
                 search={`${cat.data.title} ${cat.data.heading ?? ''} ${cat.data.description}`.toLowerCase()}
