@@ -7,7 +7,7 @@ import ConstellationCover from '../components/ConstellationCover.astro';
 // Listicles are served flat at the site root: /<slug>
 export async function getStaticPaths() {
   const [listicles, categories] = await Promise.all([
-    getCollection('listicles'),
+    getCollection('listicles', ({ data }) => !data.draft),
     getCollection('categories'),
   ]);
   // Key by entry.id (the real slug — Keystatic stores it as the filename, not

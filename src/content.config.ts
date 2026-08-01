@@ -33,6 +33,11 @@ const listicles = defineCollection({
     slug: z.string().optional(),
     // Parent category — stored as the category's slug (relationship field).
     category: z.string(),
+    // When true, the entry is excluded from the build entirely — no page,
+    // no sitemap URL, no OG image, and it doesn't count toward any
+    // category's listing. Every `getCollection('listicles', ...)` call in
+    // the site must filter on `!data.draft`.
+    draft: z.boolean().optional(),
     tags: z.array(z.string()).default([]),
     dek: z.string(),
     heroImage: z.string().optional(),

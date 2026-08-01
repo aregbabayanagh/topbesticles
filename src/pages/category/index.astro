@@ -8,7 +8,7 @@ import { getCollection } from 'astro:content';
 // resolves them independently, so there's no collision.
 const [categories, listicles] = await Promise.all([
   getCollection('categories'),
-  getCollection('listicles'),
+  getCollection('listicles', ({ data }) => !data.draft),
 ]);
 
 const countByCategory = new Map<string, number>();

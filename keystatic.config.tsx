@@ -128,6 +128,12 @@ export default config({
           collection: "categories",
           validation: { isRequired: true },
         }),
+        draft: fields.checkbox({
+          label: "Draft",
+          description:
+            "Hide this listicle from the live site — no page, no sitemap entry, no OG image, and it won't count toward any category's listing. Still editable here.",
+          defaultValue: false,
+        }),
         tags: fields.array(fields.text({ label: "Tag" }), {
           label: "Tags",
           description:

@@ -16,7 +16,7 @@ export async function getStaticPaths() {
   const [settings, categories, listicles] = await Promise.all([
     getSettings(),
     getCollection('categories'),
-    getCollection('listicles'),
+    getCollection('listicles', ({ data }) => !data.draft),
   ]);
 
   const paths = [

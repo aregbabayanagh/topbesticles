@@ -10,7 +10,7 @@ import { getCollection } from 'astro:content';
 export async function getStaticPaths() {
   const [categories, listicles] = await Promise.all([
     getCollection('categories'),
-    getCollection('listicles'),
+    getCollection('listicles', ({ data }) => !data.draft),
   ]);
   return categories.map((category) => ({
     params: { slug: category.id },

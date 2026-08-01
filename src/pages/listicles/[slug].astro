@@ -6,7 +6,7 @@ import { getCollection } from 'astro:content';
 // and any external inbound links keep working. These pages are excluded from
 // the sitemap (see astro.config.mjs `filter`) so only the new URLs are indexed.
 export async function getStaticPaths() {
-  const listicles = await getCollection('listicles');
+  const listicles = await getCollection('listicles', ({ data }) => !data.draft);
   return listicles.map((entry) => ({
     params: { slug: entry.id },
     props: { to: `/${entry.id}` },

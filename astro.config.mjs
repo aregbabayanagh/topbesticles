@@ -32,6 +32,9 @@ for (const file of fs.readdirSync(listiclesDir)) {
   const fm = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (!fm) continue;
   const data = yaml.load(fm[1]) ?? {};
+  // Drafts never get a real page (see getCollection filters elsewhere), so
+  // this map should never carry an entry for one either.
+  if (data.draft) continue;
   const slug = file.replace(/\.mdoc$/, '');
   // Convert to a proper ISO date; fall back to build date if missing.
   const lastmod = data.lastUpdated ? new Date(data.lastUpdated).toISOString() : BUILD_DATE;
