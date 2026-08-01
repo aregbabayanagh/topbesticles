@@ -73,4 +73,25 @@ const listicles = defineCollection({
   }),
 });
 
-export const collections = { categories, listicles };
+// ── Settings (singleton) ──────────────────────────────────────────────
+// Site-wide values editable in Keystatic without touching code. Stored as a
+// single flat file (src/content/settings.yaml), read via the `glob` loader
+// like the other collections — it has exactly one entry, id "settings".
+const settings = defineCollection({
+  loader: glob({ pattern: 'settings.yaml', base: './src/content' }),
+  schema: z.object({
+    siteName: z.string(),
+    tagline: z.string(),
+    contactEmail: z.string(),
+    metaDescription: z.string(),
+    footerDisclosure: z.string(),
+    social: z
+      .object({
+        twitter: z.string().nullable().optional(),
+        linkedin: z.string().nullable().optional(),
+      })
+      .optional(),
+  }),
+});
+
+export const collections = { categories, listicles, settings };

@@ -1,12 +1,26 @@
 ---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo/top-besticles-logo.png';
+import { getSettings } from '../lib/settings';
+
+const settings = await getSettings();
+const siteName = settings.siteName;
+// Wordmark styling highlights the first 3 characters (matching the current
+// "Top" + "Besticles" split) — keeps the existing look while the name itself
+// comes from Settings.
+const wordmarkAccent = siteName.slice(0, 3);
+const wordmarkRest = siteName.slice(3);
 ---
 
 <footer class="site">
   <div class="wrap">
     <div class="top">
       <div>
-        <a class="logo" href="/"><span class="t">Top</span>Besticles</a>
-        <p class="tag">The best tools in every category &mdash; checked, dated, and built to be cited.</p>
+        <a class="logo" href="/">
+          <Image src={logo} alt="TopBesticles" width={64} height={64} densities={[1, 2]} />
+          <span class="wordmark"><span class="t">{wordmarkAccent}</span>{wordmarkRest}</span>
+        </a>
+        <p class="tag">{settings.tagline}</p>
       </div>
       <div class="cols">
         <div class="col">
@@ -23,8 +37,8 @@
       </div>
     </div>
     <div class="base">
-      <p>TopBesticles is reader-supported and may earn commissions or fees from links and partnerships on this site.</p>
-      <span>&copy; 2026 TopBesticles</span>
+      <p>{settings.footerDisclosure}</p>
+      <span>&copy; 2026 {siteName}</span>
     </div>
   </div>
 </footer>
@@ -32,7 +46,8 @@
 <style>
 footer.site{background:var(--bg-2);margin-top:30px;padding:54px 0 40px;border-top:1px solid var(--line);}
 .top{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;}
-.logo{font-weight:700;font-size:19px;letter-spacing:-.02em;}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:19px;letter-spacing:-.02em;}
+.logo img{display:block;width:32px;height:32px;}
 .logo .t{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
 .tag{color:var(--ink-2);font-size:14px;margin-top:8px;max-width:300px;}
 .cols{display:flex;gap:50px;flex-wrap:wrap;}

@@ -1,7 +1,56 @@
-import { config, collection, fields } from "@keystatic/core";
+import { config, collection, fields, singleton } from "@keystatic/core";
 
 export default config({
   storage: { kind: "local" },
+  singletons: {
+    // ── Settings ──────────────────────────────────────────────────────
+    // Site-wide values editable without touching code. Stored as a single
+    // flat file at src/content/settings.yaml (see src/lib/settings.ts for
+    // the shared reader every component uses).
+    settings: singleton({
+      label: "Settings",
+      path: "src/content/settings",
+      format: { data: "yaml" },
+      schema: {
+        siteName: fields.text({
+          label: "Site Name",
+          description: 'e.g. "TopBesticles". Used in the header and footer wordmark, and page title suffixes.',
+        }),
+        tagline: fields.text({
+          label: "Tagline",
+          description: "Short line shown under the wordmark in the footer.",
+          multiline: true,
+        }),
+        contactEmail: fields.text({
+          label: "Contact Email",
+          description: "Not shown directly on the site, but available to components that need it.",
+        }),
+        metaDescription: fields.text({
+          label: "Default Meta Description (SEO)",
+          description: "Fallback meta description for pages that don't set their own.",
+          multiline: true,
+        }),
+        footerDisclosure: fields.text({
+          label: "Footer Disclosure",
+          description: 'The reader-supported / affiliate disclosure line shown above the copyright in the footer.',
+          multiline: true,
+        }),
+        social: fields.object(
+          {
+            twitter: fields.url({
+              label: "Twitter / X URL",
+              validation: { isRequired: false },
+            }),
+            linkedin: fields.url({
+              label: "LinkedIn URL",
+              validation: { isRequired: false },
+            }),
+          },
+          { label: "Social Links" }
+        ),
+      },
+    }),
+  },
   collections: {
     // ── Categories ────────────────────────────────────────────────────
     // Parent buckets that listicles belong to. Data-only (no body), stored

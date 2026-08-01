@@ -1,9 +1,23 @@
 ---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo/top-besticles-logo.png';
+import { getSettings } from '../lib/settings';
+
+const settings = await getSettings();
+const siteName = settings.siteName;
+// Wordmark styling highlights the first 3 characters (matching the current
+// "Top" + "Besticles" split) — keeps the existing look while the name itself
+// comes from Settings.
+const wordmarkAccent = siteName.slice(0, 3);
+const wordmarkRest = siteName.slice(3);
 ---
 
 <header class="site">
   <div class="wrap">
-    <a class="logo" href="/"><span class="t">Top</span>Besticles</a>
+    <a class="logo" href="/">
+      <Image src={logo} alt="TopBesticles" width={72} height={72} densities={[1, 2]} />
+      <span class="wordmark"><span class="t">{wordmarkAccent}</span>{wordmarkRest}</span>
+    </a>
     <nav class="main">
       <a class="hide" href="/category">Categories</a>
       <a class="hide" href="/#cited">Cited in AI</a>
@@ -16,7 +30,8 @@
 <style>
 header.site{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);background:rgba(246,247,251,.82);border-bottom:1px solid var(--line);}
 header.site .wrap{height:74px;display:flex;align-items:center;justify-content:space-between;}
-.logo{font-weight:700;font-size:21px;letter-spacing:-.02em;}
+.logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:21px;letter-spacing:-.02em;}
+.logo img{display:block;width:36px;height:36px;}
 .logo .t{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
 nav.main{display:flex;gap:28px;align-items:center;}
 nav.main a{color:var(--ink-2);font-weight:500;font-size:15px;}

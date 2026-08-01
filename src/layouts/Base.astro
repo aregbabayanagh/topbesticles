@@ -5,6 +5,7 @@ import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { getSettings } from '../lib/settings';
 
 interface Props {
   title: string;
@@ -13,17 +14,20 @@ interface Props {
   metaDescription?: string;
 }
 
+const settings = await getSettings();
+
 const {
   title,
-  description = 'Hand-checked best-of lists for software, services, and tools.',
+  description,
   metaTitle,
   metaDescription,
 } = Astro.props;
 
 // SEO: prefer the explicit metaTitle/metaDescription; otherwise fall back to
-// the page title (with brand suffix) and the description.
-const pageTitle = metaTitle ?? `${title} | TopBesticles`;
-const pageDescription = metaDescription ?? description;
+// the page title (with brand suffix) and the description — and finally to
+// the Settings singleton's default meta description.
+const pageTitle = metaTitle ?? `${title} | ${settings.siteName}`;
+const pageDescription = metaDescription ?? description ?? settings.metaDescription;
 ---
 
 <!doctype html>
@@ -33,7 +37,9 @@ const pageDescription = metaDescription ?? description;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={pageDescription} />
     <title>{pageTitle}</title>
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/logo/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/logo/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/logo/icon-512x512.png" />
 
     <!-- Google Analytics (GA4) — loads on every page via the Base layout. -->
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-CMJQVQYJ7G"></script>
