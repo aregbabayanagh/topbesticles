@@ -89,6 +89,7 @@ const settings = defineCollection({
       .object({
         twitter: z.string().nullable().optional(),
         linkedin: z.string().nullable().optional(),
+        instagram: z.string().nullable().optional(),
       })
       .optional(),
   }),

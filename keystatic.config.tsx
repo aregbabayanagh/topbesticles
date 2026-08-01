@@ -45,6 +45,10 @@ export default config({
               label: "LinkedIn URL",
               validation: { isRequired: false },
             }),
+            instagram: fields.url({
+              label: "Instagram URL",
+              validation: { isRequired: false },
+            }),
           },
           { label: "Social Links" }
         ),
