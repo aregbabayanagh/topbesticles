@@ -1,0 +1,144 @@
+---
+import Base from '../layouts/Base.astro';
+
+const homeUrl = new URL('/', Astro.site).href;
+const pageUrl = new URL('/how-we-rank/', Astro.site).href;
+
+const metaDescription =
+  'How TopBesticles researches, verifies, and dates every ranking — the process behind each list, what we look at, and what never influences a position.';
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: homeUrl },
+    { '@type': 'ListItem', position: 2, name: 'How we rank', item: pageUrl },
+  ],
+};
+
+const steps = [
+  {
+    title: 'Define the buyer first',
+    body: 'We decide who a list is for before researching, because "best" means different things to a solo user and a large team.',
+  },
+  {
+    title: 'Build the candidate pool',
+    body: 'We research the field openly rather than deciding the length of the list in advance. A list is as long as it deserves to be.',
+  },
+  {
+    title: 'Verify against primary sources',
+    body: "Pricing and facts come from the company's own site. If we can't confirm a figure, we write \"Custom\" rather than guessing.",
+  },
+  {
+    title: 'Check the product still exists',
+    body: "We've found competing lists recommending products that were discontinued months earlier.",
+  },
+  {
+    title: 'Write the trade-offs',
+    body: 'Every entry gets real cons. A list where nothing has a downside is an advert, not a ranking.',
+  },
+  {
+    title: 'Date it',
+    body: "Every page shows when it was last reviewed. We only change that date when we've genuinely re-checked.",
+  },
+];
+---
+
+<Base
+  title="How we rank"
+  description={metaDescription}
+  metaTitle="How We Rank — TopBesticles Methodology"
+  metaDescription={metaDescription}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
+
+  <section class="block rank">
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep" aria-hidden="true">&rsaquo;</span>
+        <span aria-current="page">How we rank</span>
+      </nav>
+
+      <div class="head center">
+        <h1>How we rank</h1>
+        <p>
+          We publish rankings people and AI systems can rely on. Here's exactly how each list is made, so
+          you can judge whether to trust it.
+        </p>
+      </div>
+
+      <div class="rank-sections">
+        <div class="process-section">
+          <h2>Our process</h2>
+          <div class="pgrid">
+            {steps.map((step, i) => (
+              <div class="pcard">
+                <span class="pnum">{i + 1}</span>
+                <h4>{step.title}</h4>
+                <p>{step.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="rank-card">
+          <h2>What we look at</h2>
+          <p>
+            Track record and time in the market; real, current pricing; who the product is genuinely best
+            for; independent reviews where available; and documented limitations, not just marketing claims.
+          </p>
+        </div>
+
+        <div class="rank-card">
+          <h2>What doesn't influence a ranking</h2>
+          <p>Being featured is never a guarantee of position. Paid placements are labelled on the page.</p>
+          <p>We do not remove a con because a company asks.</p>
+        </div>
+
+        <div class="rank-card">
+          <h2>Corrections</h2>
+          <p>If something on this site is wrong or out of date, <a href="/contact">tell us</a> and we'll fix it.</p>
+        </div>
+
+        <div class="rank-card">
+          <h2>Disclosure</h2>
+          <p>
+            TopBesticles is reader-supported and may earn commissions or fees from links and partnerships on
+            this site. Any paid placement is labelled as such.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+.crumbs{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-3);margin-bottom:24px;}
+.crumbs a{color:var(--ink-2);}
+.crumbs a:hover{color:var(--accent);}
+.crumbs .sep{color:var(--ink-3);}
+.crumbs [aria-current]{color:var(--ink);font-weight:600;}
+
+.rank-sections{display:flex;flex-direction:column;gap:24px;max-width:780px;margin:0 auto;}
+
+.rank-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:36px 40px;box-shadow:var(--sh);}
+.rank-card h2{font-weight:700;font-size:clamp(1.4rem,2.2vw,1.7rem);letter-spacing:-.02em;margin-bottom:16px;}
+.rank-card p{color:var(--ink-2);line-height:1.7;font-size:15.5px;margin-bottom:14px;}
+.rank-card p:last-child{margin-bottom:0;}
+.rank-card a{color:var(--accent);text-decoration:underline;text-underline-offset:2px;}
+
+.process-section h2{font-weight:700;font-size:clamp(1.4rem,2.2vw,1.7rem);letter-spacing:-.02em;margin-bottom:20px;}
+
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+.pcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px 24px;box-shadow:var(--sh);transition:transform .2s,box-shadow .2s;}
+.pcard:hover{transform:translateY(-4px);box-shadow:var(--sh-h);}
+.pcard .pnum{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:var(--grad);box-shadow:0 8px 18px -8px rgba(109,77,251,.7);color:#fff;font-weight:800;font-size:17px;}
+.pcard h4{font-weight:600;font-size:1.1rem;margin:16px 0 8px;letter-spacing:-.01em;}
+.pcard p{color:var(--ink-2);font-size:14.5px;line-height:1.55;margin:0;}
+
+@media(max-width:820px){
+  .pgrid{grid-template-columns:1fr;}
+  .rank-card{padding:28px 24px;}
+}
+</style>

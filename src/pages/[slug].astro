@@ -101,6 +101,7 @@ const faqLd = data.faq.length > 0
         <div class="meta-row">
           {category && <a class="cat-link" href={`/category/${category.slug}`}>{category.title}</a>}
           <span class="fresh"><span class="d"></span>Updated {updatedShort}</span>
+          <a class="method-link" href="/how-we-rank">How we rank</a>
         </div>
         <h1>{data.title}</h1>
         <p class="dek">{data.dek}</p>
@@ -291,6 +292,8 @@ const faqLd = data.faq.length > 0
 .lc-head{margin-bottom:26px;}
 .meta-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px;}
 .cat-link{font-size:12.5px;font-weight:600;color:var(--accent);background:var(--soft);padding:5px 12px;border-radius:999px;}
+.method-link{font-size:12.5px;color:var(--ink-3);text-decoration:underline;text-underline-offset:2px;}
+.method-link:hover{color:var(--accent);}
 .cat-link:hover{filter:brightness(.96);}
 .lc-head h1{font-weight:700;font-size:clamp(2rem,4vw,3rem);line-height:1.08;letter-spacing:-.025em;}
 .lc-head .dek{font-size:1.2rem;color:var(--ink-2);margin-top:14px;line-height:1.55;max-width:680px;}
