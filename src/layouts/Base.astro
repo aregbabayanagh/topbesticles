@@ -28,6 +28,16 @@ const {
 // the Settings singleton's default meta description.
 const pageTitle = metaTitle ?? `${title} | ${settings.siteName}`;
 const pageDescription = metaDescription ?? description ?? settings.metaDescription;
+
+// OG image URL mirrors the page's own path under /og/<path>.png (see
+// src/pages/og/[...slug].png.ts, which generates one PNG per real page at
+// build time). Keeping this derived from the URL — rather than a prop each
+// page has to pass — means every page automatically gets a matching image
+// as long as that endpoint's getStaticPaths knows about it.
+const trimmedPath = Astro.url.pathname.replace(/^\/|\/$/g, '');
+const ogSlug = trimmedPath === '' ? 'home' : trimmedPath;
+const ogImageUrl = new URL(`/og/${ogSlug}.png`, Astro.site).href;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
 ---
 
 <!doctype html>
@@ -40,6 +50,19 @@ const pageDescription = metaDescription ?? description ?? settings.metaDescripti
     <link rel="icon" type="image/png" sizes="32x32" href="/logo/favicon-32x32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/logo/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="512x512" href="/logo/icon-512x512.png" />
+
+    <!-- Open Graph / Twitter card — image generated at build time, see
+         src/pages/og/[...slug].png.ts -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={settings.siteName} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:image" content={ogImageUrl} />
 
     <!-- Google Analytics (GA4) — loads on every page via the Base layout. -->
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-CMJQVQYJ7G"></script>
