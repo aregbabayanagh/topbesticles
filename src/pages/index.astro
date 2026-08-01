@@ -44,7 +44,14 @@ const orgLd = {
   '@type': 'Organization',
   name: 'TopBesticles',
   url: 'https://topbesticles.com',
-  description: siteDescription,
+  // Mirrors /about's meta description — tells search engines/AI systems who's
+  // behind the site, not just what it publishes (see src/pages/about.astro).
+  description:
+    "TopBesticles publishes independent best-of rankings across every category. Founded by Areg Babayan. Here's who's behind the lists and why we started.",
+  founder: {
+    '@type': 'Person',
+    name: 'Areg Babayan',
+  },
   logo: 'https://topbesticles.com/logo/icon-512x512.png',
 };
 

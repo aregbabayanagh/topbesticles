@@ -23,6 +23,7 @@ export async function getStaticPaths() {
     { params: { slug: 'home' }, props: { title: settings.siteName, subtitle: settings.tagline } },
     { params: { slug: 'category' }, props: { title: 'Browse all categories', subtitle: undefined } },
     { params: { slug: 'contact' }, props: { title: 'Get in touch', subtitle: undefined } },
+    { params: { slug: 'about' }, props: { title: 'About TopBesticles', subtitle: undefined } },
     ...categories.map((category) => ({
       params: { slug: `category/${category.id}` },
       props: { title: category.data.heading || category.data.title, subtitle: undefined },
