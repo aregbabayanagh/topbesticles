@@ -1,0 +1,206 @@
+---
+import Base from '../layouts/Base.astro';
+
+const homeUrl = new URL('/', Astro.site).href;
+const contactUrl = new URL('/contact/', Astro.site).href;
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: homeUrl },
+    { '@type': 'ListItem', position: 2, name: 'Contact', item: contactUrl },
+  ],
+};
+---
+
+<Base
+  title="Contact"
+  description="Get in touch with TopBesticles — questions, corrections, or product submissions for our best-of lists."
+  metaTitle="Contact Us | TopBesticles"
+  metaDescription="Get in touch with TopBesticles for questions, corrections, or to get your product considered for one of our best-of lists."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
+
+  <section class="block contact">
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span class="sep" aria-hidden="true">&rsaquo;</span>
+        <span aria-current="page">Contact</span>
+      </nav>
+
+      <div class="head center">
+        <h1>Get in touch</h1>
+        <p>Questions, corrections, or feedback on a list? Send us a message and we'll get back to you.</p>
+      </div>
+
+      <div class="contact-card">
+        <p class="hint">
+          <strong>Want your product considered for a list?</strong> Include what it does, who it's for,
+          a link to the product, and pricing — that's what we need to evaluate it.
+        </p>
+
+        <form id="contact-form" novalidate>
+          <div class="row">
+            <div class="field">
+              <label for="cf-name">Name <span class="req">*</span></label>
+              <input id="cf-name" name="name" type="text" required autocomplete="name" />
+            </div>
+            <div class="field">
+              <label for="cf-company">Company</label>
+              <input id="cf-company" name="company" type="text" autocomplete="organization" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="cf-website">Website URL <span class="req">*</span></label>
+            <input
+              id="cf-website"
+              name="website"
+              type="url"
+              required
+              autocomplete="url"
+              placeholder="https://example.com"
+            />
+          </div>
+
+          <div class="field">
+            <label for="cf-email">Email <span class="req">*</span></label>
+            <input id="cf-email" name="email" type="email" required autocomplete="email" />
+          </div>
+
+          <div class="field">
+            <label for="cf-message">Message <span class="req">*</span></label>
+            <textarea id="cf-message" name="message" rows="6" required></textarea>
+          </div>
+
+          <!-- Honeypot: left blank by humans, filled in by bots. Web3Forms
+               discards submissions where this has a value; hidden off-screen
+               rather than display:none so it stays part of the tab order check. -->
+          <input
+            type="text"
+            name="botcheck"
+            id="cf-botcheck"
+            class="hp"
+            tabindex="-1"
+            autocomplete="off"
+            aria-hidden="true"
+          />
+
+          <button class="btn btn-primary" type="submit" id="cf-submit">Send message</button>
+
+          <p class="status" id="cf-status" role="status" aria-live="polite" hidden></p>
+        </form>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const WEB3FORMS_ACCESS_KEY = 'e39ac362-d3a0-4f43-99b7-951502c0d0aa';
+
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const submitBtn = document.getElementById('cf-submit') as HTMLButtonElement | null;
+  const status = document.getElementById('cf-status') as HTMLParagraphElement | null;
+
+  if (form && submitBtn && status) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      const data = new FormData(form);
+      const payload = {
+        access_key: WEB3FORMS_ACCESS_KEY,
+        subject: 'New message from the TopBesticles contact form',
+        from_name: 'TopBesticles contact form',
+        name: data.get('name'),
+        company: data.get('company') || 'N/A',
+        website: data.get('website'),
+        email: data.get('email'),
+        message: data.get('message'),
+        botcheck: data.get('botcheck') || '',
+      };
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
+      status.hidden = true;
+      status.classList.remove('ok', 'err');
+
+      try {
+        const res = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const result = await res.json();
+
+        if (result.success) {
+          form.reset();
+          status.textContent = "Thanks — your message is in. We'll get back to you soon.";
+          status.classList.add('ok');
+        } else {
+          throw new Error(result.message || 'Submission failed');
+        }
+      } catch {
+        status.textContent =
+          "Something went wrong sending your message. Please try again in a moment.";
+        status.classList.add('err');
+      } finally {
+        status.hidden = false;
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send message';
+      }
+    });
+  }
+</script>
+
+<style>
+.crumbs{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-3);margin-bottom:24px;}
+.crumbs a{color:var(--ink-2);}
+.crumbs a:hover{color:var(--accent);}
+.crumbs .sep{color:var(--ink-3);}
+.crumbs [aria-current]{color:var(--ink);font-weight:600;}
+
+.contact-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:44px;box-shadow:var(--sh);max-width:640px;margin:0 auto;}
+
+.hint{background:var(--soft);color:var(--ink-2);border-radius:12px;padding:14px 16px;font-size:14px;line-height:1.55;margin-bottom:28px;}
+.hint strong{color:var(--ink);}
+
+.row{display:flex;gap:16px;}
+.row .field{flex:1;}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:20px;}
+label{font-size:13.5px;font-weight:600;color:var(--ink);}
+.req{color:var(--accent);}
+
+input[type='text'],
+input[type='email'],
+input[type='url'],
+textarea{
+  font-family:inherit;font-size:15px;color:var(--ink);background:var(--bg);
+  border:1px solid var(--line);border-radius:10px;padding:12px 14px;outline:none;
+  transition:border-color .15s,box-shadow .15s;resize:vertical;
+}
+input[type='text']:focus,
+input[type='email']:focus,
+input[type='url']:focus,
+textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(109,77,251,.15);}
+
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;overflow:hidden;}
+
+#cf-submit{width:100%;justify-content:center;margin-top:4px;}
+#cf-submit[disabled]{opacity:.7;cursor:not-allowed;}
+#cf-submit:hover:not([disabled]){transform:translateY(-2px);}
+
+.status{margin-top:16px;font-size:14px;line-height:1.5;padding:12px 14px;border-radius:10px;}
+.status.ok{background:var(--fresh-bg);color:var(--fresh);}
+.status.err{background:#FDEDED;color:#B42318;}
+
+@media(max-width:560px){
+  .row{flex-direction:column;gap:0;}
+  .contact-card{padding:32px 24px;}
+}
+</style>
