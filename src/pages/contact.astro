@@ -65,9 +65,26 @@ const breadcrumbLd = {
           </div>
 
           <div class="field">
+            <label for="cf-social">Social profiles <span class="opt">(optional)</span></label>
+            <textarea
+              id="cf-social"
+              name="social_profiles"
+              rows="2"
+              placeholder="LinkedIn, X, etc. — one per line"
+            ></textarea>
+          </div>
+
+          <div class="field">
             <label for="cf-email">Email <span class="req">*</span></label>
             <input id="cf-email" name="email" type="email" required autocomplete="email" />
           </div>
+
+          <p class="msg-hint">
+            If you'd like your product considered for a list, include: what it does, who it's
+            best for, current pricing, your main differentiator, any exclusive offer for our
+            readers, review/directory listings (G2, Capterra, Clutch), and your affiliate
+            program if you have one. See <a href="/partner">our partner page</a> for full details.
+          </p>
 
           <div class="field">
             <label for="cf-message">Message <span class="req">*</span></label>
@@ -120,6 +137,7 @@ const breadcrumbLd = {
         name: data.get('name'),
         company: data.get('company') || 'N/A',
         website: data.get('website'),
+        social_profiles: data.get('social_profiles') || 'N/A',
         email: data.get('email'),
         message: data.get('message'),
         botcheck: data.get('botcheck') || '',
@@ -175,6 +193,11 @@ const breadcrumbLd = {
 .field{display:flex;flex-direction:column;gap:6px;margin-bottom:20px;}
 label{font-size:13.5px;font-weight:600;color:var(--ink);}
 .req{color:var(--accent);}
+.opt{color:var(--ink-3);font-weight:500;}
+
+.msg-hint{font-size:12.5px;line-height:1.55;color:var(--ink-3);margin:-8px 0 20px;}
+.msg-hint a{color:var(--ink-2);text-decoration:underline;}
+.msg-hint a:hover{color:var(--accent);}
 
 input[type='text'],
 input[type='email'],
