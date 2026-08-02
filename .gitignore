@@ -1,5 +1,8 @@
 # build output
 dist/
+
+# working notes / draft content, not for the repo
+drafts/
 # generated types
 .astro/
 
