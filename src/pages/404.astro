@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Page Not Found"
+  description="The page you're looking for doesn't exist or may have moved."
+  metaTitle="Page Not Found | TopBesticles"
+  metaDescription="The page you're looking for doesn't exist or may have moved."
+>
+  <Fragment slot="head">
+    <meta name="robots" content="noindex, follow" />
+  </Fragment>
+
+  <section class="block notfound">
+    <div class="wrap">
+      <div class="nf-card">
+        <p class="nf-code">404</p>
+        <h1>Page not found</h1>
+        <p class="nf-copy">
+          The page you're looking for doesn't exist, or it may have moved. Try heading back home or
+          browsing our categories.
+        </p>
+        <div class="nf-actions">
+          <a class="btn btn-primary" href="/">Back to homepage</a>
+          <a class="btn-ghost" href="/category">Browse categories</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+.notfound{padding:120px 0;}
+.nf-card{max-width:520px;margin:0 auto;text-align:center;background:#fff;border:1px solid var(--line);border-radius:20px;padding:52px 40px;box-shadow:var(--sh);}
+.nf-code{font-weight:800;font-size:clamp(3.5rem,9vw,5rem);line-height:1;letter-spacing:-.03em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:8px;}
+.nf-card h1{font-weight:700;font-size:clamp(1.6rem,3vw,2.1rem);letter-spacing:-.02em;}
+.nf-copy{color:var(--ink-2);line-height:1.65;margin-top:14px;max-width:400px;margin-left:auto;margin-right:auto;}
+.nf-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:28px;}
+
+@media(max-width:560px){
+  .notfound{padding:70px 0;}
+  .nf-card{padding:40px 24px;}
+}
+</style>

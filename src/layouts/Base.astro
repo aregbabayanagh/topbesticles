@@ -46,6 +46,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={pageDescription} />
+    <link rel="canonical" href={canonicalUrl} />
     <title>{pageTitle}</title>
     <link rel="icon" type="image/png" sizes="32x32" href="/logo/favicon-32x32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/logo/apple-touch-icon.png" />
@@ -88,7 +89,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
 <style is:global>
 /* ── Design tokens ─────────────────────────────────────── */
 :root {
-  --bg:#F6F7FB;--bg-2:#EEF0F8;--card:#FFFFFF;--ink:#13151B;--ink-2:#565C6B;--ink-3:#9AA0B2;--line:#E6E8F2;
+  --bg:#F6F7FB;--bg-2:#EEF0F8;--card:#FFFFFF;--ink:#13151B;--ink-2:#565C6B;--ink-3:#6B7280;--line:#E6E8F2;
   --v1:#6D4DFB;--v2:#8B5CF6;--cyan:#22D3EE;--accent:#6D4DFB;--accent-2:#5A3EF0;--soft:#ECEAFE;
   --grad:linear-gradient(135deg,#6D4DFB 0%,#8B5CF6 55%,#22D3EE 130%);
   --fresh:#0E9AA5;--fresh-bg:#E2F6F8;
