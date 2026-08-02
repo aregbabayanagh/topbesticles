@@ -46,9 +46,13 @@ const integrations = [
   react(),
   markdoc(),
   sitemap({
-    // Keep the old /listicles/<slug> redirect stubs out of the sitemap — only
-    // the new flat /<slug> URLs should be indexed.
-    filter: (page) => !new URL(page).pathname.startsWith('/listicles/'),
+    // Keep the old /listicles/<slug> redirect stubs, and any renamed-slug
+    // redirect stubs (e.g. a listicle's old URL after a rename), out of the
+    // sitemap — only the current, real URLs should be indexed.
+    filter: (page) => {
+      const pathname = new URL(page).pathname;
+      return !pathname.startsWith('/listicles/') && pathname !== '/best-seo-agencies-for-law-firms/';
+    },
     serialize(item) {
       // item.url is the absolute URL; normalise its path to always end in "/".
       const pathname = new URL(item.url).pathname;

@@ -1,0 +1,22 @@
+---
+// Permanent redirect: this listicle was renamed to
+// /best-law-firm-seo-agencies/. Same static-safe redirect pattern as the old
+// /listicles/<slug> stubs (see src/pages/listicles/[slug].astro) so old
+// links / bookmarks keep working. Excluded from the sitemap (see
+// astro.config.mjs `filter`) so only the new URL is indexed.
+const to = '/best-law-firm-seo-agencies/';
+const canonical = new URL(to, Astro.site).href;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="refresh" content={`0; url=${to}`} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content="noindex, follow" />
+    <title>Redirecting…</title>
+  </head>
+  <body>
+    <p>This page has moved to <a href={to}>{to}</a>.</p>
+  </body>
+</html>
