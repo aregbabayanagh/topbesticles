@@ -153,6 +153,12 @@ export default config({
           validation: { isRequired: false },
         }),
         quickAnswer: fields.text({ label: "Quick Answer" }),
+        keyTakeaways: fields.array(fields.text({ label: "Takeaway" }), {
+          label: "Key Takeaways",
+          description:
+            "Short scannable bullets shown alongside Quick Answer. Leave empty to let Quick Answer span the full width.",
+          itemLabel: (props) => props.value ?? "Takeaway",
+        }),
         lastUpdated: fields.date({ label: "Last Updated" }),
         metaTitle: fields.text({ label: "Meta Title (SEO)" }),
         metaDescription: fields.text({
@@ -219,6 +225,26 @@ export default config({
             reviewScore: fields.text({
               label: "Review Score",
               description: 'e.g. "5.0 on Clutch"',
+              validation: { isRequired: false },
+            }),
+            linkedin: fields.url({
+              label: "LinkedIn URL",
+              validation: { isRequired: false },
+            }),
+            twitter: fields.url({
+              label: "Twitter / X URL",
+              validation: { isRequired: false },
+            }),
+            facebook: fields.url({
+              label: "Facebook URL",
+              validation: { isRequired: false },
+            }),
+            instagram: fields.url({
+              label: "Instagram URL",
+              validation: { isRequired: false },
+            }),
+            youtube: fields.url({
+              label: "YouTube URL",
               validation: { isRequired: false },
             }),
             sponsored: fields.checkbox({

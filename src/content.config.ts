@@ -43,6 +43,7 @@ const listicles = defineCollection({
     heroImage: z.string().optional(),
     heroImageAlt: z.string().optional(),
     quickAnswer: z.string(),
+    keyTakeaways: z.array(z.string()).default([]),
     lastUpdated: z.coerce.date(),
     metaTitle: z.string().optional(),
     metaDescription: z.string().optional(),
@@ -65,6 +66,13 @@ const listicles = defineCollection({
         founders: z.string().optional(),
         notableClients: z.string().optional(),
         reviewScore: z.string().optional(),
+        // Social profile links, rendered as small icon links near the facts
+        // block on the listicle page. Any/all may be left empty.
+        linkedin: z.string().nullable().optional(),
+        twitter: z.string().nullable().optional(),
+        facebook: z.string().nullable().optional(),
+        instagram: z.string().nullable().optional(),
+        youtube: z.string().nullable().optional(),
         // Independent controls for the outbound link's rel attribute:
         // `sponsored` drives both rel="sponsored" and the visible badge;
         // `linkRel` independently drives rel="nofollow". See [slug].astro.
