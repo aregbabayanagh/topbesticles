@@ -25,6 +25,7 @@ export async function getStaticPaths() {
     { params: { slug: 'contact' }, props: { title: 'Get in touch', subtitle: undefined } },
     { params: { slug: 'about' }, props: { title: 'About TopBesticles', subtitle: undefined } },
     { params: { slug: 'how-we-rank' }, props: { title: 'How we rank', subtitle: undefined } },
+    { params: { slug: 'cited-in-ai' }, props: { title: 'How our lists get cited in AI answers', subtitle: undefined } },
     ...categories.map((category) => ({
       params: { slug: `category/${category.id}` },
       props: { title: category.data.heading || category.data.title, subtitle: undefined },
