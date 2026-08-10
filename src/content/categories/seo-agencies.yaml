@@ -3,7 +3,11 @@ heading: Best SEO Agencies
 description: >-
   Vetted SEO agencies by specialty, industry, and budget — with real pricing,
   honest trade-offs, and what each one is actually best at.
-metaTitle: 'Best SEO Agencies (2026): Vetted by Specialty & Industry'
+featured: false
+order: 1
+coverImage: /images/categories/seo-agencies/coverImage.webp
+coverImageAlt: best SEO agencies
+metaTitle: 'Best SEO Agencies (2026): Specialty & Industry'
 metaDescription: >-
   Independent rankings of the best SEO agencies, broken down by specialty and
   business type. Real pricing, honest pros and cons, updated regularly.
