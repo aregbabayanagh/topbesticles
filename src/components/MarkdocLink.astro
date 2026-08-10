@@ -1,0 +1,12 @@
+---
+// Wraps every Markdoc `link` node so a listicle body can cite an outbound
+// source without each .mdoc file having to hand-write rel attributes. A link
+// whose domain is in NOFOLLOW_DOMAINS (src/lib/nofollowDomains.ts) gets
+// rel="nofollow"; every other outbound link renders followed, matching how
+// item links are already handled per-item via `linkRel` in [slug].astro.
+import { isNofollowDomain } from '../lib/nofollowDomains';
+
+const { href, title } = Astro.props;
+const rel = isNofollowDomain(href) ? 'nofollow' : undefined;
+---
+<a href={href} title={title} rel={rel}><slot /></a>

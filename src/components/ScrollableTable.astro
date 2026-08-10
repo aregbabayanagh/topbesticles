@@ -2,11 +2,77 @@
 // Wraps a Markdoc `table` node so any table an author writes into a
 // listicle's body content scrolls sideways on narrow screens instead of
 // squashing, exactly like the homepage showcase mockup and the listicle
-// comparison table. The actual scroll mechanics live in the shared
-// `.table-scroll` rule in src/layouts/Base.astro's global stylesheet.
+// comparison table. The actual scroll mechanics and visual styling
+// (header tint, row dividers, padding, zebra, hover) live in the shared
+// `.table-scroll` / `.prose table` rules in src/layouts/Base.astro's
+// global stylesheet.
+//
+// Also detects, per column, whether every body cell holds only a number
+// or a price ("$997 per month", "94%", "1,200") and tags that column's
+// <th>/<td> with class="num" so the stylesheet can right-align it. This
+// runs on the rendered slot HTML rather than the Markdoc AST, since by
+// the time this component sees the table it's already been transformed
+// to plain thead/tbody/tr/th/td markup.
+const NUMERIC_CELL = /^[$€£]?\d[\d,]*(\.\d+)?\s*(%|x)?(\s*(per|\/)\s*\S+)?$/i;
+
+function stripTags(html: string) {
+  return html.replace(/<[^>]+>/g, '').trim();
+}
+
+function addNumClass(tagHtml: string) {
+  return tagHtml.replace(/^(<[a-z]+)([ >])/i, '$1 class="num"$2');
+}
+
+let html = Astro.slots.has('default') ? await Astro.slots.render('default') : '';
+
+const theadInner = html.match(/<thead>([\s\S]*?)<\/thead>/)?.[1];
+const tbodyInner = html.match(/<tbody>([\s\S]*?)<\/tbody>/)?.[1];
+
+if (theadInner && tbodyInner) {
+  const headerCells = [...theadInner.matchAll(/<th[^>]*>[\s\S]*?<\/th>/g)].map((m) => m[0]);
+  const bodyRows = [...tbodyInner.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/g)].map((m) =>
+    [...m[1].matchAll(/<td[^>]*>[\s\S]*?<\/td>/g)].map((c) => c[0])
+  );
+
+  // A column is "numeric" only if EVERY body cell in it — across every
+  // row — is nothing but a number or a price. One prose cell in the
+  // column disqualifies the whole column, so it stays left-aligned.
+  const numericColumns = headerCells.map((_, colIndex) => {
+    if (bodyRows.length === 0) return false;
+    return bodyRows.every((row) => {
+      const cell = row[colIndex];
+      if (!cell) return false;
+      const text = stripTags(cell);
+      return text.length > 0 && NUMERIC_CELL.test(text);
+    });
+  });
+
+  if (numericColumns.some(Boolean)) {
+    html = html
+      .replace(/<thead>([\s\S]*?)<\/thead>/, (_, inner) => {
+        let col = 0;
+        const transformed = inner.replace(/<th[^>]*>[\s\S]*?<\/th>/g, (cell: string) => {
+          const isNumeric = numericColumns[col];
+          col++;
+          return isNumeric ? addNumClass(cell) : cell;
+        });
+        return `<thead>${transformed}</thead>`;
+      })
+      .replace(/<tbody>([\s\S]*?)<\/tbody>/, (_, inner) => {
+        const transformed = inner.replace(/<tr([^>]*)>([\s\S]*?)<\/tr>/g, (_m: string, trAttrs: string, rowInner: string) => {
+          let col = 0;
+          const cells = rowInner.replace(/<td[^>]*>[\s\S]*?<\/td>/g, (cell: string) => {
+            const isNumeric = numericColumns[col];
+            col++;
+            return isNumeric ? addNumClass(cell) : cell;
+          });
+          return `<tr${trAttrs}>${cells}</tr>`;
+        });
+        return `<tbody>${transformed}</tbody>`;
+      });
+  }
+}
 ---
 <div class="table-scroll">
-  <table>
-    <slot />
-  </table>
+  <table set:html={html} />
 </div>

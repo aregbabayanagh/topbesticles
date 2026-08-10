@@ -10,5 +10,11 @@ export default defineMarkdocConfig({
       ...nodes.table,
       render: component('./src/components/ScrollableTable.astro'),
     },
+    // Routes every inline link in a listicle body through MarkdocLink.astro,
+    // which applies rel="nofollow" per-domain — see that file for the list.
+    link: {
+      ...nodes.link,
+      render: component('./src/components/MarkdocLink.astro'),
+    },
   },
 });

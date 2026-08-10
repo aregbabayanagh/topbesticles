@@ -73,6 +73,7 @@ const listicles = defineCollection({
         facebook: z.string().nullable().optional(),
         instagram: z.string().nullable().optional(),
         youtube: z.string().nullable().optional(),
+        tiktok: z.string().nullable().optional(),
         // Independent controls for the outbound link's rel attribute:
         // `sponsored` drives both rel="sponsored" and the visible badge;
         // `linkRel` independently drives rel="nofollow". See [slug].astro.

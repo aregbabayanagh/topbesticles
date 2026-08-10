@@ -153,22 +153,25 @@ export default config({
           validation: { isRequired: false },
         }),
         quickAnswer: fields.text({ label: "Quick Answer" }),
-        keyTakeaways: fields.array(fields.text({ label: "Takeaway" }), {
-          label: "Key Takeaways",
-          description:
-            "Short scannable bullets shown alongside Quick Answer. Leave empty to let Quick Answer span the full width.",
-          itemLabel: (props) => props.value ?? "Takeaway",
-        }),
+        keyTakeaways: fields.array(
+          fields.markdoc.inline({ label: "Takeaway" }),
+          {
+            label: "Key Takeaways",
+            description:
+              "Short scannable bullets shown alongside Quick Answer. Supports inline links. Leave empty to let Quick Answer span the full width.",
+            itemLabel: () => "Takeaway",
+          },
+        ),
         lastUpdated: fields.date({ label: "Last Updated" }),
         metaTitle: fields.text({ label: "Meta Title (SEO)" }),
         metaDescription: fields.text({
           label: "Meta Description (SEO)",
           multiline: true,
         }),
-        intro: fields.text({
+        intro: fields.markdoc.inline({
           label: "Intro (lede)",
-          description: "Short intro paragraph shown above the article body.",
-          multiline: true,
+          description:
+            "Short intro shown above the article body. Supports inline links. Blank-line-separated paragraphs render as separate <p> tags.",
         }),
         body: fields.markdoc({
           label: "Body",
@@ -247,6 +250,10 @@ export default config({
               label: "YouTube URL",
               validation: { isRequired: false },
             }),
+            tiktok: fields.url({
+              label: "TikTok URL",
+              validation: { isRequired: false },
+            }),
             sponsored: fields.checkbox({
               label: "Sponsored",
               description:
@@ -272,7 +279,10 @@ export default config({
         faq: fields.array(
           fields.object({
             question: fields.text({ label: "Question" }),
-            answer: fields.text({ label: "Answer", multiline: true }),
+            answer: fields.markdoc.inline({
+              label: "Answer",
+              description: "Supports inline links.",
+            }),
           }),
           {
             label: "FAQ",
