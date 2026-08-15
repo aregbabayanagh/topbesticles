@@ -139,7 +139,7 @@ const faqLd = data.faq.length > 0
             </span>
             <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
           </summary>
-          <p>{data.quickAnswer}</p>
+          <p set:html={renderMarkdocInline(data.quickAnswer)} />
         </details>
 
         {data.keyTakeaways.length > 0 && (
@@ -228,10 +228,11 @@ const faqLd = data.faq.length > 0
                     <div class="item-title">
                       <h2 class="item-name">{item.name}</h2>
                       <p class="starting-price">{item.startingPrice}</p>
-                      <div class="item-sub">
-                        <span class="pill">Best for {item.bestFor}</span>
-                        {item.sponsored && <span class="sponsored-badge">Sponsored</span>}
-                      </div>
+                      {item.sponsored && (
+                        <div class="item-sub">
+                          <span class="sponsored-badge">Sponsored</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                   <a
@@ -248,6 +249,8 @@ const faqLd = data.faq.length > 0
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
                   </a>
                 </div>
+
+                <p class="best-for">Best for {item.bestFor}</p>
 
                 <p class="item-desc">{firstParagraph}</p>
 
@@ -454,6 +457,7 @@ const faqLd = data.faq.length > 0
 .item-sub{display:flex;flex-wrap:wrap;align-items:center;gap:10px;}
 .sponsored-badge{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#9a6a00;background:#fff3d6;border:1px solid #f0d999;padding:3px 9px;border-radius:999px;}
 .visit{flex:none;text-decoration:none;white-space:nowrap;}
+.best-for{margin:14px 0;padding:4px 16px;border-radius:18px;background:var(--soft);color:var(--accent);font-size:12px;font-weight:600;box-sizing:border-box;}
 .item-desc{margin-top:16px;color:var(--ink-2);line-height:1.7;font-size:15.5px;}
 
 /* Read more toggle — native <details>, so collapsed content stays in the

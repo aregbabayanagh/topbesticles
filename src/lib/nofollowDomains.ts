@@ -15,6 +15,15 @@ export const NOFOLLOW_DOMAINS = new Set([
   'omnius.so',
   'interodigital.com',
   'breadchaser.ai',
+  'agencyzoom.com',
+  'nextagency.com',
+  'insuredmine.com',
+  'medicareproapp.com',
+  'agent-crm.com',
+  'glovebox.io',
+  'insureio.com',
+  'appliedaijax.com',
+  'agentcubed.com',
 ]);
 
 export function isNofollowDomain(href: string): boolean {

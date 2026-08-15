@@ -152,7 +152,10 @@ export default config({
           description: 'Describe the image for screen readers/SEO. Falls back to the listicle title if left empty. Only matters if Hero Image is set — otherwise the generated cover art is decorative.',
           validation: { isRequired: false },
         }),
-        quickAnswer: fields.text({ label: "Quick Answer" }),
+        quickAnswer: fields.markdoc.inline({
+          label: "Quick Answer",
+          description: "Supports inline links.",
+        }),
         keyTakeaways: fields.array(
           fields.markdoc.inline({ label: "Takeaway" }),
           {
