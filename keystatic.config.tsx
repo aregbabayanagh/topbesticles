@@ -166,6 +166,12 @@ export default config({
           },
         ),
         lastUpdated: fields.date({ label: "Last Updated" }),
+        datePublished: fields.date({
+          label: "Date Published",
+          description:
+            "Original publish date, used for the Article JSON-LD's datePublished. Leave empty to omit the Article schema block for this page.",
+          validation: { isRequired: false },
+        }),
         metaTitle: fields.text({ label: "Meta Title (SEO)" }),
         metaDescription: fields.text({
           label: "Meta Description (SEO)",
@@ -181,6 +187,23 @@ export default config({
           description:
             "Full article. Supports H2/H3, bold, bullet lists, and links.",
         }),
+        rankingsHeading: fields.text({
+          label: "Rankings Heading",
+          description:
+            'Overrides the H2 shown above the ranked items. Leave empty for the default, "The rankings".',
+          validation: { isRequired: false },
+        }),
+        comparisonColumns: fields.array(
+          fields.object({
+            label: fields.text({ label: "Column Label" }),
+          }),
+          {
+            label: "At a Glance — Extra Columns",
+            description:
+              'Extra columns inserted between "Best for" and "Starting price" in the At a glance table. Each item must supply a matching value, in the same order, under its own "At a Glance — Extra Values".',
+            itemLabel: (props) => props.fields.label.value ?? "Column",
+          }
+        ),
         items: fields.array(
           fields.object({
             rank: fields.integer({ label: "Rank" }),
@@ -233,6 +256,20 @@ export default config({
               description: 'e.g. "5.0 on Clutch"',
               validation: { isRequired: false },
             }),
+            pricingVerified: fields.text({
+              label: "Pricing Verified",
+              description: 'Source and month the starting price was checked, e.g. "Clutch profile, August 2026"',
+              validation: { isRequired: false },
+            }),
+            comparisonValues: fields.array(
+              fields.text({ label: "Value" }),
+              {
+                label: "At a Glance — Extra Values",
+                description:
+                  'One value per listicle-level "At a Glance — Extra Column", in the same order.',
+                itemLabel: (props) => props.value ?? "Value",
+              }
+            ),
             linkedin: fields.url({
               label: "LinkedIn URL",
               validation: { isRequired: false },

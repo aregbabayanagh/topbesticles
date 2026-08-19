@@ -83,11 +83,25 @@ const faqLd = data.faq.length > 0
       })),
     }
   : null;
+
+const articleLd = data.datePublished
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: data.title,
+      datePublished: data.datePublished.toISOString().slice(0, 10),
+      dateModified: updatedISO,
+      author: { '@type': 'Organization', name: 'TopBesticles' },
+      publisher: { '@type': 'Organization', name: 'TopBesticles', url: homeUrl },
+      mainEntityOfPage: pageUrl,
+    }
+  : null;
 ---
 <Base title={data.title} description={data.dek} metaTitle={data.metaTitle} metaDescription={data.metaDescription}>
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
   <script type="application/ld+json" set:html={JSON.stringify(itemListLd)} />
   {faqLd && <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />}
+  {articleLd && <script type="application/ld+json" set:html={JSON.stringify(articleLd)} />}
 
   <article class="listicle">
     <div class="reading">
@@ -168,7 +182,11 @@ const faqLd = data.faq.length > 0
           <div class="table-scroll">
             <table class="cmp-table">
               <thead>
-                <tr><th>Rank</th><th>Name</th><th>Best for</th><th>Starting price</th></tr>
+                <tr>
+                  <th>Rank</th><th>Name</th><th>Best for</th>
+                  {data.comparisonColumns.map((col) => <th>{col.label}</th>)}
+                  <th>Starting price</th>
+                </tr>
               </thead>
               <tbody>
                 {items.map((item) => (
@@ -179,6 +197,7 @@ const faqLd = data.faq.length > 0
                       {item.rank === 1 && <span class="top-badge">Top pick</span>}
                     </td>
                     <td>{item.bestFor}</td>
+                    {data.comparisonColumns.map((_col, i) => <td>{item.comparisonValues[i]}</td>)}
                     <td>{item.startingPrice}</td>
                   </tr>
                 ))}
@@ -190,7 +209,7 @@ const faqLd = data.faq.length > 0
 
       <!-- 6. Ranked items -->
       <section class="section">
-        <h2 class="sec-title">The rankings</h2>
+        <h2 class="sec-title">{data.rankingsHeading || 'The rankings'}</h2>
         <div class="items">
           {items.map((item) => {
             // "First paragraph" = up to the first blank-line break; anything
@@ -204,6 +223,7 @@ const faqLd = data.faq.length > 0
               { label: 'Founders', value: item.founders },
               { label: 'Notable clients', value: item.notableClients },
               { label: 'Reviews', value: item.reviewScore },
+              { label: 'Pricing verified', value: item.pricingVerified },
             ].filter((f) => f.value);
 
             const socials = [
@@ -226,7 +246,7 @@ const faqLd = data.faq.length > 0
                       )}
                     </div>
                     <div class="item-title">
-                      <h2 class="item-name">{item.name}</h2>
+                      <h3 class="item-name">{item.name}</h3>
                       <p class="starting-price">{item.startingPrice}</p>
                       {item.sponsored && (
                         <div class="item-sub">

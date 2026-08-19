@@ -45,10 +45,22 @@ const listicles = defineCollection({
     quickAnswer: z.string(),
     keyTakeaways: z.array(z.string()).default([]),
     lastUpdated: z.coerce.date(),
+    // Original publish date, used for the Article JSON-LD's datePublished.
+    // Optional: pages without it simply skip that JSON-LD block.
+    datePublished: z.coerce.date().optional(),
     metaTitle: z.string().optional(),
     metaDescription: z.string().optional(),
     // Short lede paragraph. The full article lives in the markdoc body.
     intro: z.string(),
+    // Overrides the "The rankings" H2 above the ranked items. Optional so
+    // existing listicles keep their default heading unchanged.
+    rankingsHeading: z.string().optional(),
+    // Extra "At a glance" comparison-table columns beyond the fixed
+    // Rank/Name/Best for/Starting price set, inserted before Starting price.
+    // Each item's `comparisonValues` must supply one value per column, in
+    // the same order. Empty by default, so existing listicles render the
+    // same four columns as before.
+    comparisonColumns: z.array(z.object({ label: z.string() })).default([]),
     items: z.array(
       z.object({
         rank: z.number(),
@@ -66,6 +78,12 @@ const listicles = defineCollection({
         founders: z.string().optional(),
         notableClients: z.string().optional(),
         reviewScore: z.string().optional(),
+        // Source and month the starting price was checked, e.g. "Clutch
+        // profile, August 2026" — shown as a fact row alongside Founded etc.
+        pricingVerified: z.string().optional(),
+        // Values for the listicle's extra `comparisonColumns`, in the same
+        // order. Empty by default.
+        comparisonValues: z.array(z.string()).default([]),
         // Social profile links, rendered as small icon links near the facts
         // block on the listicle page. Any/all may be left empty.
         linkedin: z.string().nullable().optional(),
