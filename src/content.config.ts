@@ -52,9 +52,11 @@ const listicles = defineCollection({
     metaDescription: z.string().optional(),
     // Short lede paragraph. The full article lives in the markdoc body.
     intro: z.string(),
-    // Overrides the "The rankings" H2 above the ranked items. Optional so
-    // existing listicles keep their default heading unchanged.
-    rankingsHeading: z.string().optional(),
+    // Overrides the "At a glance" H2 above the comparison table. Optional,
+    // falls back to "At a glance" — used to work each article's own keyword
+    // into the heading without hardcoding article-specific text in the
+    // template.
+    comparisonHeading: z.string().optional(),
     // Extra "At a glance" comparison-table columns beyond the fixed
     // Rank/Name/Best for/Starting price set, inserted before Starting price.
     // Each item's `comparisonValues` must supply one value per column, in

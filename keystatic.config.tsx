@@ -187,10 +187,10 @@ export default config({
           description:
             "Full article. Supports H2/H3, bold, bullet lists, and links.",
         }),
-        rankingsHeading: fields.text({
-          label: "Rankings Heading",
+        comparisonHeading: fields.text({
+          label: "At a Glance Heading",
           description:
-            'Overrides the H2 shown above the ranked items. Leave empty for the default, "The rankings".',
+            'Overrides the H2 shown above the comparison table. Leave empty for the default, "At a glance".',
           validation: { isRequired: false },
         }),
         comparisonColumns: fields.array(
